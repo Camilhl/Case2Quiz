@@ -15,26 +15,10 @@
 
         }
 
-        function buildQuery(obj) {
-            var Result= '';
-            if(typeof(obj)== 'object') {
-                jQuery.each(obj, function(key, value) {
-                    Result+= (Result) ? '&' : '';
-                    if(typeof(value)== 'object' && value.length) {
-                        for(var i=0; i<value.length; i++) {
-                            Result+= [key+'[]', encodeURIComponent(value[i])].join('=');
-                        }
-                    } else {
-                        Result+= [key, encodeURIComponent(value)].join('=');
-                    }
-                });
-            }
-            return Result;
-        }
 
         $(document).ready(function() {
-            alert("lastet siden");
-            var correctAnswer;
+
+            var rightAnswerIndex;
 
             /*var data= {
                 "quizName": $("#quizname").val(),
@@ -43,13 +27,11 @@
 
 
             $("#submit").click(function () {
-                alert("du trykket på knappen");
                 $.ajax({
                     url: 'rest/quizzes',
                     type: 'POST',
-                    //data: buildQuery(data),
                     data: JSON.stringify({
-                        "quizName": $("#quizname").val(),
+                        "name": $("#quizname").val(),
                         "startTime": $("#time").val()
                     }),
 
@@ -75,13 +57,13 @@
                 $.ajax({
                     url: 'rest/quizzes/' + $("#quizname").val() + '/questions',
                     type: 'POST',
-                    data:  JSON.stringify({
-                        question: $("#q").val(),
-                        timelimit: $("#t").val(),
+                    data: JSON.stringify({
+                        "question": $("#q").val(),
+                        "timeLimit": $("#t").val(),
                         //answers: answers,
-                        rightAnswer: correctAnswer,
+                        "rightAnswerIndex": rightAnswerIndex,
                     }),
-                    contentType: 'application/json;charset=utf-8',
+                    contentType: 'application/json; charset=utf-8',
                     dataType: 'json',
 
                     success: function (result) {
@@ -90,9 +72,6 @@
 
 
                 });
-
-                alert("kjørt hele dritten");
-
 
             });
         });
@@ -118,10 +97,10 @@
         <h3>Time (seconds):</h3><input id="t" type="number" value="30">
         <h3>Answer-alternatives : (use checkbox to set the right answer)</h3>
         <br>
-        <input type="radio" name="selectanswer" value="0" onclick="selectAnswer(value)"><input id="a1" type="text" value="a1"></input><br>
-        <input type="radio" name="selectanswer" value="1" onclick="selectAnswer(value)"><input id="a2" type="text" value="a2"></input><br>
-        <input type="radio" name="selectanswer" value="2" onclick="selectAnswer(value)"><input id="a3" type="text" value="a3"></input> <br>
-        <input type="radio" name="selectanswer" value="3" onclick="selectAnswer(value)"><input id="a4" type="text" value="a4"></input><br>
+        <input type="radio" name="selectanswer" onfocus="selectAnswer('0')"><input id="a1" type="text" value="a1"></input><br>
+        <input type="radio" name="selectanswer" onclick="selectAnswer('1')"><input id="a2" type="text" value="a2"></input><br>
+        <input type="radio" name="selectanswer" onclick="selectAnswer('2')"><input id="a3" type="text" value="a3"></input> <br>
+        <input type="radio" name="selectanswer" onclick="selectAnswer('3')"><input id="a4" type="text" value="a4"></input><br>
 
     </div>
     <br>

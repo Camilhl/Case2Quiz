@@ -48,7 +48,7 @@ public class Main {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Collection<Quiz> getKunder() {
+    public Collection<Quiz> getQuizzes() {
         return quizzes.values();
     }
 

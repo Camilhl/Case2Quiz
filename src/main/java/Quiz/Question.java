@@ -11,10 +11,10 @@ public class Question {
     private int rightAnswerIndex;
     private int timeLimit;
 
-    public Question(String q, int timeLimit,
+    public Question(String question, int timeLimit,
                     //ArrayList<String> a,
                     int rightAnswerIndex){
-        this.question = q;
+        this.question = question;
         this.rightAnswerIndex = rightAnswerIndex;
         this.timeLimit = timeLimit;
         /*for(int i=0; i<answers.length(); i++){
@@ -28,23 +28,31 @@ public class Question {
         return rightAnswerIndex;
     }
 
-    public String getQ() {
+    public int getTimeLimit() {
+        return timeLimit;
+    }
+
+    public String getQuestion() {
         return question;
     }
 
-    public String[] getA() {
-        return answers;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
+    public void setTimeLimit(int timeLimit) {
+        this.timeLimit = timeLimit;
     }
 
     public void setRightAnswerIndex(int rightAnswerIndex) {
         this.rightAnswerIndex = rightAnswerIndex;
     }
 
-    public void setTimeLimit(int timeLimit) {
-        this.timeLimit = timeLimit;
+    public void setQuestion(String question) {
+        this.question = question;
+    }
+
+    public void setAnswers(String[] answers) {
+        this.answers = answers;
+    }
+
+    public String[] getAnswers() {
+        return answers;
     }
 }
