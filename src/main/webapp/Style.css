@@ -10,3 +10,71 @@
 #qBox{
     border: 1px solid black;
 }
+
+#topMenu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #ffb492;
+}
+
+#topMenuOptions {
+    float: left;
+}
+
+#topMenuOptions a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 16px;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    text-decoration: none;
+}
+
+#topMenuOptions a:hover {
+    background-color: #ff9666;
+}
+
+#toplogo {
+    padding: 16px
+}
+
+
+
+#quizzes {
+    border-bottom: 1px solid black;
+    padding: 5px;
+
+
+}
+
+#scoreboardButton {
+
+    float:right;
+    padding: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-top: -6px;
+    background-color: #333333;
+    color: white;
+    text-align: center;
+
+}
+
+#joinButton {
+    float:right;
+    padding: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-top: -6px;
+    background-color: #333333;
+    color: white;
+    text-align: center;
+
+}
+
+#joinButton:hover, #scoreboardButton:hover {
+    background-color: #111111;
+}

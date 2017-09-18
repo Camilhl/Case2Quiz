@@ -2,9 +2,80 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Overview</title>
+    <title>MainWindow</title>
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="Style.css">
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+    <script src="jquery-3.2.1.min.js"></script>
+    <script language="javascript">
+        $(document).ready(function() {
+
+            var person;
+
+            function insertNick() {
+                var txt;
+                person = prompt("Please enter your nickname:", "Anonymus");
+                if (person == null || person == "") {
+                    txt = "User cancelled the prompt.";
+                } else {
+                    alert("Welcome " + person + "!")
+                }
+            }
+
+            function scoreBoard() {
+
+                var scoreboard;
+
+
+            }
+
+            var myVar = setInterval(loadData, 1000);
+
+            function loadData() {
+
+                $.get("rest/quizzes", function (data) {
+
+                    if (data != null) {
+                        //$("#box").html(data);
+                        document.getElementById("headline").innerHTML = data;
+                    }
+                    else {
+                        //$("#box").html("NULL");
+                        document.getElementById("headline").innerHTML = "NULL";
+                    }
+                });
+            }
+        });
+
+    </script>
+
 </head>
 <body>
+<ul id="topMenu">
+    <li id="topMenuOptions"><img id="toplogo" src="https://image.ibb.co/mM8dUQ/Les_Quizerables.jpg" alt="Logo" height="60" width="120"></li>
+
+    <li id="topMenuOptions"><a href="MainWindow.html">Home</a></li>
+    <li id="topMenuOptions"><a href="regNewQuiz.html">Create new quiz</a></li>
+    <li id="topMenuOptions"><a href="#contact">Contact</a></li>
+    <li id="topMenuOptions"><a href="#about">About</a></li>
+</ul>
+
+<h1 id="headline">Quizzes</h1>
+<h2>Ongoing quizzes:</h2>
+<ul id="ongoingQuizzes" style="list-style-type:disc">
+    <li name="quizzes" >Quiz1<a id="joinButton" onclick="insertNick()" href="Questions.html">Join</a><a id="scoreboardButton" onclick="scoreBoard()">ScoreBoard</a></li>
+    <li name="quizzes">Quiz2</li>
+    <li name="quizzes">Quiz3</li>
+</ul>
+
+<h2>Future quizzes:</h2>
+<ul id="futureQuizzes" style="list-style-type:disc">
+    <li name="quizzes">Quiz4</li>
+    <li name="quizzes">Quiz5</li>
+    <li name="quizzes">Quiz5</li>
+</ul>
+
 
 </body>
 </html>

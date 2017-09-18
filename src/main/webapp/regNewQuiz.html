@@ -3,28 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <title>RegNewQuiz</title>
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="Style.css">
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+    <script src="jquery-3.2.1.min.js"></script>
+    <script language="javascript">
+        function selectAnswer(val){
+
+            correctAnswer = val;
+
+        }
+
+        function buildQuery(obj) {
+            var Result= '';
+            if(typeof(obj)== 'object') {
+                jQuery.each(obj, function(key, value) {
+                    Result+= (Result) ? '&' : '';
+                    if(typeof(value)== 'object' && value.length) {
+                        for(var i=0; i<value.length; i++) {
+                            Result+= [key+'[]', encodeURIComponent(value[i])].join('=');
+                        }
+                    } else {
+                        Result+= [key, encodeURIComponent(value)].join('=');
+                    }
+                });
+            }
+            return Result;
+        }
+
+        $(document).ready(function() {
+            alert("lastet siden");
+            var correctAnswer;
+
+            /*var data= {
+                "quizName": $("#quizname").val(),
+                "startTime": $("#time").val()
+            };*/
+
+
+            $("#submit").click(function () {
+                alert("du trykket på knappen");
+                $.ajax({
+                    url: 'rest/quizzes',
+                    type: 'POST',
+                    //data: buildQuery(data),
+                    data: JSON.stringify({
+                        "quizName": $("#quizname").val(),
+                        "startTime": $("#time").val()
+                    }),
+
+                    contentType: 'application/json; charset=utf-8', //''application/json; charset=utf-8',
+                    dataType: 'json',
+
+
+                    success: function (result) {
+                        alert("QuiZName added successfully")
+                    },
+                });
+
+                /*var answers = [
+                    document.getElementById("a1").val(),
+                    document.getElementById("a2").val(),
+                    document.getElementById("a3").val(),
+                    document.getElementById("a4").val()
+                ];*/
+
+
+                //alert(answers.val(0) + ", " + answers.val(1) + ", riktig svar er nummer: " + rightAnswer);
+
+                $.ajax({
+                    url: 'rest/quizzes/' + $("#quizname").val() + '/questions',
+                    type: 'POST',
+                    data:  JSON.stringify({
+                        question: $("#q").val(),
+                        timelimit: $("#t").val(),
+                        //answers: answers,
+                        rightAnswer: correctAnswer,
+                    }),
+                    contentType: 'application/json;charset=utf-8',
+                    dataType: 'json',
+
+                    success: function (result) {
+                        alert("Question added successfully")
+                    }
+
+
+                });
+
+                alert("kjørt hele dritten");
+
+
+            });
+        });
+    </script>
 </head>
 <body>
+<ul id="topMenu">
+    <li id="topMenuOptions"><img id="toplogo" src="https://image.ibb.co/mM8dUQ/Les_Quizerables.jpg" alt="Logo" height="60" width="120"></li>
+
+    <li id="topMenuOptions"><a href="MainWindow.html">Home</a></li>
+    <li id="topMenuOptions"><a href="regNewQuiz.html">Create new quiz</a></li>
+    <li id="topMenuOptions"><a href="#contact">Contact</a></li>
+    <li id="topMenuOptions"><a href="#about">About</a></li>
+</ul>
+
     <h1>Register new quiz</h1>
-    <h2>Quiz-name:</h2><input id="name" type="text" value="name">
+    <h2>Quiz-name:</h2><input id="quizname" type="text" value="name">
     <h3>Starting time:</h3><input id="time" type="text" value="time">
     <br>
     <br>
     <div id="qBox">
         <h2>Question 1:</h2><input id="q" type="text" value="q">
-        <h3>Time (seconds):</h3><input id="t" type="text" value="y">
+        <h3>Time (seconds):</h3><input id="t" type="number" value="30">
         <h3>Answer-alternatives : (use checkbox to set the right answer)</h3>
         <br>
-        <input type="checkbox" name="checka1"><input id="a1" type="text" value="a1"></input>
-        <br>
-        <input type="checkbox" name="checka2"><input id="a2" type="text" value="a2"></input>
-        <br>
-        <h3 id="newA">+Add answer-alternative</h3>
+        <input type="radio" name="selectanswer" value="0" onclick="selectAnswer(value)"><input id="a1" type="text" value="a1"></input><br>
+        <input type="radio" name="selectanswer" value="1" onclick="selectAnswer(value)"><input id="a2" type="text" value="a2"></input><br>
+        <input type="radio" name="selectanswer" value="2" onclick="selectAnswer(value)"><input id="a3" type="text" value="a3"></input> <br>
+        <input type="radio" name="selectanswer" value="3" onclick="selectAnswer(value)"><input id="a4" type="text" value="a4"></input><br>
+
     </div>
     <br>
     <h3 id="newQ">+Add a new question</h3>
-    <button id="submit">Submit quiz</button>
-
+    <button id="submit" name="submit">Submit quiz</button>
 </body>
 </html>
