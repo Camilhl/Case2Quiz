@@ -12,14 +12,14 @@ public class Question {
     private int timeLimit;
 
     public Question(String question, int timeLimit,
-                    //ArrayList<String> a,
+                    String[] a,
                     int rightAnswerIndex){
         this.question = question;
         this.rightAnswerIndex = rightAnswerIndex;
         this.timeLimit = timeLimit;
-        /*for(int i=0; i<answers.length(); i++){
-            answers[i] = answers.get(i);
-        }*/
+        for(int i=0; i<answers.length; i++){
+            answers[i] = a[i];
+        }
     }
 
     public Question(){}
@@ -54,5 +54,9 @@ public class Question {
 
     public String[] getAnswers() {
         return answers;
+    }
+
+    public String getAnswer(int i){
+        return answers[i];
     }
 }

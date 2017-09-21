@@ -1,3 +1,6 @@
+.body{
+    background-color: 333;
+}
 
 #newA {
     text-decoration: underline;
@@ -8,7 +11,8 @@
 }
 
 #qBox{
-    border: 1px solid black;
+    border: 1px solid #ffb492;
+    background-color: #ffeee6;
 }
 
 #topMenu {
@@ -18,6 +22,7 @@
     overflow: hidden;
     background-color: #ffb492;
 }
+
 
 #topMenuOptions {
     float: left;
@@ -52,29 +57,33 @@
 
 #scoreboardButton {
 
-    float:right;
-    padding: 5px;
+    float:left;
+    /*padding: 5px;
     padding-left: 15px;
     padding-right: 15px;
     margin-top: -6px;
     background-color: #333333;
     color: white;
-    text-align: center;
+    text-align: center;*/
 
 }
 
 #joinButton {
-    float:right;
-    padding: 5px;
+    float:left;
+    /*padding: 5px;
     padding-left: 15px;
     padding-right: 15px;
     margin-top: -6px;
     background-color: #333333;
     color: white;
-    text-align: center;
+    text-align: center;*/
 
 }
 
 #joinButton:hover, #scoreboardButton:hover {
-    background-color: #111111;
+    //background-color: #eeeeee;
+}
+
+.container{
+    padding: 20px;
 }

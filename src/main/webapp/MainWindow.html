@@ -7,74 +7,131 @@
     <link rel="stylesheet" type="text/css" href="Style.css">
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="http://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="jquery-3.2.1.min.js"></script>
     <script language="javascript">
+
         $(document).ready(function() {
-
-            var person;
-
-            function insertNick() {
-                var txt;
-                person = prompt("Please enter your nickname:", "Anonymus");
-                if (person == null || person == "") {
-                    txt = "User cancelled the prompt.";
-                } else {
-                    alert("Welcome " + person + "!")
-                }
-            }
-
-            function scoreBoard() {
-
-                var scoreboard;
-
-
-            }
-
-            var myVar = setInterval(loadData, 1000);
-
-            function loadData() {
-
-                $.get("rest/quizzes", function (data) {
-
-                    if (data != null) {
-                        //$("#box").html(data);
-                        document.getElementById("headline").innerHTML = data;
-                    }
-                    else {
-                        //$("#box").html("NULL");
-                        document.getElementById("headline").innerHTML = "Headline";
-                    }
-                });
-            }
+            loadData();
         });
 
+        function insertNick(quizNumber) {
+            var quizName;
+            var nickname = prompt("Please enter your nickname:", "Anonymus");
+
+            if (nickname == null || nickname == "") {
+                alert("User cancelled the prompt.");
+            } else {
+
+                $.get("rest/quizzes/", function (data) {
+                    quizName = data[quizNumber].name;
+
+                    $.ajax({
+                        url: 'rest/quizzes/' + quizName + '/players',
+                        type: 'POST',
+                        data: JSON.stringify({
+                            "nickname": nickname,
+                        }),
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+
+                        success: function (result) {
+                            alert("Welcome to " + quizName + ", " + nickname + "!")
+                            window.location.href = 'Questions.html';
+                        }
+                    });
+                });
+            }
+        }
+
+        function scoreBoard(quizNumber) {
+
+            var quizName;
+            var text = "!SCOREBOARD!\n"
+
+            $.get("rest/quizzes/", function (data) {
+                quizName = data[quizNumber].name;
+
+                $.get("rest/quizzes/" + quizName + "/scoreboard", function (data) {
+
+                    if(data != null) {
+                        for (i = 0; i < data.length; i++) {
+                            if(data[i] != null) {
+                                text += (i+1) + " : " + data[i].nickname + ", score: " + data[i].score + "\n";
+                            }
+                        }
+                    }
+
+                    alert(text);
+
+                });
+            });
+
+        }
+
+        function loadData() {
+            $.get("rest/quizzes/", function (data) {
+                if (data != null) {
+
+                    var quizName;
+                    var quizTime;
+
+                    //$("#container").append('<div class="row"> <div name="quizzes" id="-1" class="col-sm-4" style="background-color:#ffdccc;"><dt>Quiz names</dt></div><div class="col-sm-4" style="background-color:#ffcbb3;"><dt>Quiz starts at</dt></div><div class="col-sm-4" style="background-color:#ffdccc;"></div></div>');
+
+
+                    for(i=0; i<data.length; i++) {
+
+                        quizName = data[i].name;
+                        quizTime = data[i].startTime;
+
+
+                        //$("#ongoingQuizzes").append('<li name="quizzes" id="' + i + '">' + quizName + '<a id="joinButton" onclick="insertNick(' + i + ')">Join</a><a id="scoreboardButton" onclick="scoreBoard(' + i + ')">ScoreBoard</a></li><br>');
+
+                        $("#container").append('<div class="row"> <div name="quizzes" id="' + i + '" class="col-sm-3" style="background-color:#ffdccc;">' + quizName + '</div><div class="col-sm-3" style="background-color:#ffcbb3;">' + quizTime + '</div><div class="col-sm-3" style="background-color:#ffdccc;"><a id="scoreboardButton" onclick="scoreBoard(' + i + ')">ScoreBoard</a></div><div class="col-sm-3" style="background-color:#ffcbb3;"><a id="joinButton" onclick="insertNick(' + i + ')">Join</a></div></div>');
+                    }
+
+                }
+
+            })
+        }
     </script>
 
 </head>
 <body>
 <ul id="topMenu">
     <li id="topMenuOptions"><img id="toplogo" src="https://image.ibb.co/mM8dUQ/Les_Quizerables.jpg" alt="Logo" height="60" width="120"></li>
-
-    <li id="topMenuOptions"><a href="MainWindow.html">Home</a></li>
+    <li id="topMenuOptions"><a href="Frontpage.html">Home</a></li>
+    <li id="topMenuOptions"><a href="MainWindow.html">Start quizzing!</a></li>
     <li id="topMenuOptions"><a href="regNewQuiz.html">Create new quiz</a></li>
     <li id="topMenuOptions"><a href="#contact">Contact</a></li>
     <li id="topMenuOptions"><a href="#about">About</a></li>
 </ul>
-
 <h1 id="headline">Quizzes</h1>
+<div id="container" class="container-fluid">
 <h2>Ongoing quizzes:</h2>
 <ul id="ongoingQuizzes" style="list-style-type:disc">
-    <li name="quizzes" >Quiz1<a id="joinButton" onclick="insertNick()" href="Questions.html">Join</a><a id="scoreboardButton" onclick="scoreBoard()">ScoreBoard</a></li>
-    <li name="quizzes">Quiz2</li>
-    <li name="quizzes">Quiz3</li>
 </ul>
+    <div class="row">
+        <div name="quizzes" id="-1" class="col-sm-3" style="background-color:#ffdccc;"><dt>Quiz names</dt></div>
+        <div class="col-sm-3" style="background-color:#ffcbb3;"><dt>Started</dt></div>
+        <div class="col-sm-3" style="background-color:#ffdccc;"><dt>View the scoreboard!</dt></div>
+        <div class="col-sm-3" style="background-color:#ffcbb3;"><dt>Join the quiz!</dt></div>
+    </div>
+</div>
 
+
+<div class="container-fluid">
 <h2>Future quizzes:</h2>
 <ul id="futureQuizzes" style="list-style-type:disc">
-    <li name="quizzes">Quiz4</li>
-    <li name="quizzes">Quiz5</li>
-    <li name="quizzes">Quiz5</li>
 </ul>
+    <div class="row">
+        <div name="quizzes" class="col-sm-6" style="background-color:#ffdccc;"><dt>Quiz names</dt></div>
+        <div class="col-sm-6" style="background-color:#ffcbb3;"><dt>Starting time</dt></div>
+    </div>
+</div>
 
 
 </body>

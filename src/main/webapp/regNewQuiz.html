@@ -7,23 +7,63 @@
     <link rel="stylesheet" type="text/css" href="Style.css">
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="http://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+
     <script src="jquery-3.2.1.min.js"></script>
     <script language="javascript">
-        function selectAnswer(val){
 
-            correctAnswer = val;
+        var correctAnswer = [];
 
+        var numOfQuestions = 0;
+
+        function selectAnswer(questionNumber, val){
+
+            correctAnswer[questionNumber] = val;
         }
-
 
         $(document).ready(function() {
 
-            var rightAnswerIndex;
 
-            /*var data= {
-                "quizName": $("#quizname").val(),
-                "startTime": $("#time").val()
-            };*/
+            $("#newQ").click(function(){
+                numOfQuestions += 1;
+                console.log("numberofquestions: " + numOfQuestions);
+
+                $("p").append('<div class="container" id="qBox">' +
+                    '<h2 id="questionheader">Question ' + numOfQuestions + '</h2>' +
+                    '<label>Question:</label>' +
+                    '<input name=0 id="q' + numOfQuestions + '" type="text" class="form-control">' +
+                    '<label>Time-limit (secounds):</label>' +
+                    '<input name=0 id="t' + numOfQuestions + '" type="number" class="form-control">' +
+                    '<label>Answer-alternatives : (use checkbox to set the right answer)</label>' +
+                    '<br>' +
+                    '<div class="radio">' +
+                    '<label><input type="radio" name="selectanswer' + numOfQuestions + '" onfocus="selectAnswer(' + numOfQuestions +', 0)"  id="a1' + numOfQuestions +'">Option 1</label>' +
+                    '</div>' +
+                    '<div class="radio">' +
+                    '<label><input type="radio" name="selectanswer' + numOfQuestions + '" onfocus="selectAnswer(' + numOfQuestions + ', 1)"  id="a2' + numOfQuestions + '">Option 1</label>' +
+                    '</div>' +
+                    '<div class="radio">' +
+                    '<label><input type="radio" name="selectanswer' + numOfQuestions + '" onfocus="selectAnswer(' + numOfQuestions +', 2)"  id="a3' + numOfQuestions + '">Option 1</label>' +
+                    '</div>' +
+                    '<div class="radio">' +
+                    '<label><input type="radio" name="selectanswer' + numOfQuestions + '" onfocus="selectAnswer(' + numOfQuestions +', 3)"  id="a4' + numOfQuestions + '">Option 1</label>' +
+                '</div></div><br>');
+
+                /*$("p").append('<div class="container" id="qBox">' +
+                    '<h2>Question ' + (numOfQuestions+1) + '</h2><input id="q' + numOfQuestions + '" type="text" value="q' + numOfQuestions + '">' +
+                    '<h3>Time (seconds):</h3><input id="t' + numOfQuestions + '" type="number" value="30">' +
+                    '<h3>Answer-alternatives : (use checkbox to set the right answer)</h3><br>' +
+                    '<input type="radio" name="selectanswer" onfocus="selectAnswer("' + numOfQuestions + '", "0")"><input id="a1' + numOfQuestions + '" type="text" value="line"></input><br>' +
+                    '<input type="radio" name="selectanswer" onclick="selectAnswer("' + numOfQuestions + '", "1")"><input id="a2' + numOfQuestions + '" type="text" value="balla"></input><br>' +
+                    '<input type="radio" name="selectanswer" onclick="selectAnswer("' + numOfQuestions + '", "2")"><input id="a3' + numOfQuestions + '" type="text" value="nora"></input> <br>' +
+                    '<input type="radio" name="selectanswer" onclick="selectAnswer("' + numOfQuestions + '", "3")"><input id="a4' + numOfQuestions + '" type="text" value="halla"></input><br>' +
+                '</div><br>');*/
+            });
 
 
             $("#submit").click(function () {
@@ -31,7 +71,7 @@
                     url: 'rest/quizzes',
                     type: 'POST',
                     data: JSON.stringify({
-                        "name": $("#quizname").val(),
+                        "name": $("#quizName").val(),
                         "startTime": $("#time").val()
                     }),
 
@@ -40,71 +80,108 @@
 
 
                     success: function (result) {
-                        alert("QuiZName added successfully")
+                        alert("QUIZNAME added successfully")
                     },
                 });
 
-                /*var answers = [
-                    document.getElementById("a1").val(),
-                    document.getElementById("a2").val(),
-                    document.getElementById("a3").val(),
-                    document.getElementById("a4").val()
-                ];*/
+                for (i = 0; i <= numOfQuestions; i++) {
+                    var q = "#q" + i + "";
+                    var t = "#t" + i + "";
+                    var a1 = "#a1" + i + "";
+                    var a2 = "#a2" + i + "";
+                    var a3 = "#a3" + i + "";
+                    var a4 = "#a4" + i + "";
+                    console.log("question 1: " + q);
+                    $.ajax({
+                        url: 'rest/quizzes/' + $("#quizName").val() + '/questions',
+                        type: 'POST',
+                        data: JSON.stringify({
+                            "question": $(q).val(),
+                            "timeLimit": $(t).val(),
+                            "answers": [$(a1).val(), $(a2).val(), $(a3).val(), $(a4).val()],
+                            "rightAnswerIndex": correctAnswer[i],
+                        }),
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+
+                        success: function (result) {
+                            alert("QUESTION added successfully");
+                        }
 
 
-                //alert(answers.val(0) + ", " + answers.val(1) + ", riktig svar er nummer: " + rightAnswer);
+                    });
+                }
 
-                $.ajax({
-                    url: 'rest/quizzes/' + $("#quizname").val() + '/questions',
-                    type: 'POST',
-                    data: JSON.stringify({
-                        "question": $("#q").val(),
-                        "timeLimit": $("#t").val(),
-                        //answers: answers,
-                        "rightAnswerIndex": rightAnswerIndex,
-                    }),
-                    contentType: 'application/json; charset=utf-8',
-                    dataType: 'json',
-
-                    success: function (result) {
-                        alert("Question added successfully")
-                    }
-
-
-                });
 
             });
         });
     </script>
 </head>
 <body>
+
+<!--<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="MainWindow.html"><img id="toplogo" src="https://image.ibb.co/mM8dUQ/Les_Quizerables.jpg" alt="Logo" height="60" width="120"></a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li><a href="MainWindow.html">Home</a></li>
+            <li class="active"><a href="regNewQuiz.html">Create new quiz</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+    </div>
+</nav>-->
 <ul id="topMenu">
     <li id="topMenuOptions"><img id="toplogo" src="https://image.ibb.co/mM8dUQ/Les_Quizerables.jpg" alt="Logo" height="60" width="120"></li>
-
-    <li id="topMenuOptions"><a href="MainWindow.html">Home</a></li>
+    <li id="topMenuOptions"><a href="Frontpage.html">Home</a></li>
+    <li id="topMenuOptions"><a href="MainWindow.html">Start quizzing!</a></li>
     <li id="topMenuOptions"><a href="regNewQuiz.html">Create new quiz</a></li>
     <li id="topMenuOptions"><a href="#contact">Contact</a></li>
     <li id="topMenuOptions"><a href="#about">About</a></li>
 </ul>
 
+<div class="container">
     <h1>Register new quiz</h1>
-    <h2>Quiz-name:</h2><input id="quizname" type="text" value="name">
-    <h3>Starting time:</h3><input id="time" type="text" value="time">
+    <label>Quiz-name:</label>
+    <input id="quizName" type="text" class="form-control">
+
+    <label>Quiz starts at:</label>
+
+    <input id="time" type="datetime-local" class="form-control">
+
+</div>
     <br>
-    <br>
-    <div id="qBox">
-        <h2>Question 1:</h2><input id="q" type="text" value="q">
-        <h3>Time (seconds):</h3><input id="t" type="number" value="30">
-        <h3>Answer-alternatives : (use checkbox to set the right answer)</h3>
+    <div class="container" id="qBox">
+        <h2 id="questionheader">Question 1</h2>
+        <label>Question:</label>
+        <input name=0 id="q0" type="text" class="form-control">
+
+        <label>Time-limit (secounds):</label>
+        <input name=0 id="t0" type="number" class="form-control">
+
+        <label>Answer-alternatives : (use checkbox to set the right answer)</label>
         <br>
-        <input type="radio" name="selectanswer" onfocus="selectAnswer('0')"><input id="a1" type="text" value="a1"></input><br>
-        <input type="radio" name="selectanswer" onclick="selectAnswer('1')"><input id="a2" type="text" value="a2"></input><br>
-        <input type="radio" name="selectanswer" onclick="selectAnswer('2')"><input id="a3" type="text" value="a3"></input> <br>
-        <input type="radio" name="selectanswer" onclick="selectAnswer('3')"><input id="a4" type="text" value="a4"></input><br>
+        <div class="radio">
+            <label><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '0')"  id="a10">Option 1</label>
+        </div>
+        <div class="radio">
+            <label><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '1')"  id="a20">Option 1</label>
+        </div>
+        <div class="radio">
+            <label><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '2')"  id="a30">Option 1</label>
+        </div>
+        <div class="radio">
+            <label><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '3')"  id="a40">Option 1</label>
+        </div>
+
 
     </div>
-    <br>
-    <h3 id="newQ">+Add a new question</h3>
-    <button id="submit" name="submit">Submit quiz</button>
+<br>
+<p></p>
+<div class="container">
+    <button id="newQ" type="button" class="btn btn-info btn-lg">+Add a new question</button>
+    <button id="submit" type="button" class="btn btn-success btn-lg">Submit quiz</button>
+</div>
 </body>
 </html>

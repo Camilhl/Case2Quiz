@@ -10,33 +10,176 @@
     <script src="jquery-3.2.1.min.js"></script>
     <script language="javascript">
 
+        var round = 0;
+
+        var answerChosen;
+
+        var correctAnswer;
+
+        var nickname = "Anonymus"; //hardkodet for testing!!!!!
+
+        var quizName;
+
+        var countdown;
+
+        var numberOfQuestions;
+
+        $(document).ready(function() {
+            $.get("rest/quizzes/", function (quizzes) {
+                if (quizzes != null) {
+
+                    quizName = quizzes[0].name; //hardkodet for testing
+
+                    $("#quizName").append('' + quizName + ''); //sets the headline "quiz name"
+
+                    $("#quizStarts").append('' + quizzes[0].startTime + ''); //sets the headline "quiz name"
+
+                    console.log("round: " + round);
+
+                    loadQuestion();
+
+                }
+            });
+        });
+
+        var interval = setInterval(countdownFunction, 1000);
+
+        function countdownFunction(){
+            countdown -= 1;
+            if(countdown >= 0) {
+                document.getElementById("timer").innerHTML = "Time left this question: " + countdown;
+
+                if(countdown <= 10){
+                    //document.getElementById("timer").innerHTML = '<div class="bg-danger">Time left this question:' + countdown + '</div>';
+
+                    document.getElementById("timer").style.color="red";
+                }
+                if(countdown > 10){
+                    //document.getElementById("timer").innerHTML = "Time left this question: " + countdown;
+                    document.getElementById("timer").style.color="black";
+
+                }
+            }
+            else{
+                submit();
+            }
+        }
+
+        function selectAnswer(val){
+
+            answerChosen = val;
+            console.log(answerChosen);
+        }
+
+        function submit() {
+            if (answerChosen != null) {
+
+                if (answerChosen == correctAnswer) {
+
+                    $.ajax({
+                        url: 'rest/quizzes/' + quizName + '/players/' + nickname,
+                        type: 'PUT',
+                        //data: '1',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+
+                        success: function (result) {
+                            alert("Correct answer! 1 point to you!");
+                        },
+                        statusCode: {
+                            404: function () {
+                                alert("404: could not find user");
+                            }
+
+                        },
+
+
+                    });
+
+                }else{
+                    alert("Sorry wrong answer..")
+                }
+            } else{
+                alert("You didn't chose an answer. No points for you..")
+            }
+            round += 1;
+            loadQuestion();
+
+        };
+
+
+
+        function loadQuestion() {
+
+            $.get("rest/quizzes/" + quizName + "/questions", function(questions) { //gets all the questions for the quiz
+
+
+
+
+                    if (round > 0) {
+                        $("#timer").remove();
+                        $("#quest").remove();
+                        $("#answeroptions").remove();
+                        $("#answeroptions").remove();
+                        $("#answeroptions").remove();
+                        $("#answeroptions").remove();
+                        $("#answerText").remove();
+                        $("#answerText").remove();
+                        $("#answerText").remove();
+                        $("#answerText").remove();
+                        $("#space").remove();
+                        $("#space").remove();
+                        $("#space").remove();
+                        $("#space").remove();
+
+                    }
+                console.log("round: " + round + "\nq-length: " + questions.length)
+                if (round != questions.length) {
+
+                    countdown = questions[round].timeLimit;
+                    console.log("timelimit: " + countdown);
+                    console.log("question: " + questions[round].question);
+
+                    $("#timeLeft").append('<p id="timer" type="number">Time for this question: ' + countdown + '</p>'); //sets the time that the quiz started
+
+                    $("#question").append('<p id="quest">Question: ' + questions[round].question + '</p>'); //sets the first question
+
+                    correctAnswer = questions[round].rightAnswerIndex;
+                    console.log("correct: " + correctAnswer);
+
+
+                    for (i = 0; i < 4; i++) {
+                        $("#answers").append('<p id="answerText"><input type="radio" name="answer" id="answeroptions" onclick="selectAnswer(' + i + ')">' + questions[round].answers[i] + '</p><br id="space">');
+                    }
+                } else{
+                    clearInterval(interval);
+                    $("#quizStarts").remove();
+                    $("#submit").remove();
+                    $("#timeLeft").append('<h2>The quiz is now over! Click the button to see scoreboard!</h2><br><button onclick="showScoreboard()">Scoreboard!</button>')
+
+                }
+
+            });
+        }
     </script>
 </head>
 <body>
 <ul id="topMenu">
     <li id="topMenuOptions"><img id="toplogo" src="https://image.ibb.co/mM8dUQ/Les_Quizerables.jpg" alt="Logo" height="60" width="120"></li>
-
-    <li id="topMenuOptions"><a href="MainWindow.html">Home</a></li>
+    <li id="topMenuOptions"><a href="Frontpage.html">Home</a></li>
+    <li id="topMenuOptions"><a href="MainWindow.html">Start quizzing!</a></li>
     <li id="topMenuOptions"><a href="regNewQuiz.html">Create new quiz</a></li>
     <li id="topMenuOptions"><a href="#contact">Contact</a></li>
     <li id="topMenuOptions"><a href="#about">About</a></li>
 </ul>
-<h1>"Quiz name"</h1>
-<h3>Time left: </h3><p id="time"></p>
-<h3>Question: </h3> <p id="q">Hvilke farger har det norske flagget?</p>
+<h1 id="quizName">Quiz: </h1>
+<h1 id="quizStarts">Quiz starts at: </h1>
 
-<div>
+<h3 id="timeLeft"></h3>
+<h3 id="question"></h3>
 
-    <!--The different answers should show up here -->
-
-    <input type="checkbox" name="checka1" value="1">Rødt, hvitt og grønt
-    <br>
-    <input type="checkbox" name="checka2" value="2">Rødt, hvitt og blått
-    <br>
-
-    <button>Submit</button>
-
+<div id="answers">
 </div>
-
+<button id="submit" onclick="submit()">Submit</button>
 </body>
 </html>
