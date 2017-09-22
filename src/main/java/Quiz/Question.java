@@ -10,6 +10,7 @@ public class Question {
     private String[] answers = new String[4];
     private int rightAnswerIndex;
     private int timeLimit;
+    private String url;
 
     public Question(String question, int timeLimit,
                     String[] a,
@@ -23,6 +24,18 @@ public class Question {
     }
 
     public Question(){}
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        if(url.equals("")){
+            this.url = null;
+        } else {
+            this.url = url;
+        }
+    }
 
     public int getRightAnswerIndex() {
         return rightAnswerIndex;

@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class Scoreboard {
 
-    private Nick[] nicks = new Nick[3];
+    private Nick[] nicks = new Nick[10];
 
     public Scoreboard(){
 
@@ -28,7 +28,7 @@ public class Scoreboard {
      * @return false if not added to the scoreboard(not hight enough score)
      */
 
-    /*public boolean addToScoreboard(Nick nick){
+   public boolean addToScoreboard(Nick nick){
         String name = nick.getNickname();
         int points = nick.getScore();
 
@@ -46,12 +46,12 @@ public class Scoreboard {
 
         }
         return false;
-    }*/
+    }
 
     /**
      * Sorterer listene med nicknames og tilhørende poeng
      */
-   /* public void innsettingssort(){
+    public void innsettingssort(){
 
 
             for (int j = 1; j < nicks.length; ++j) {
@@ -67,20 +67,20 @@ public class Scoreboard {
                 nicks[i + 1] = byttNick;
 
             }
-    }*/
-
-    public String toString(){
-        String s = "";
-        for(int i = 0; i < nicks.length; i++){
-            if(nicks[i] != null){
-                s += "Name: " + nicks[i].getNickname() + ", Points: " + nicks[i].getScore() + "\n";
-            }
-        }
-        return s;
     }
 
+   public String toString() {
+       String s = "";
+       for (int i = 0; i < nicks.length; i++) {
+           if (nicks[i] != null) {
+               s += "Name: " + nicks[i].getNickname() + ", Points: " + nicks[i].getScore() + "\n";
+           }
+       }
+       return s;
+   }
+
     public static void main(String[]args){
-        /*Nick nick1 = new Nick("Camilla", 10);
+        Nick nick1 = new Nick("Camilla", 10);
         Nick nick2 = new Nick("Nora", 5);
         Nick nick3 = new Nick("Kimia", 7);
 
@@ -92,7 +92,7 @@ public class Scoreboard {
         System.out.println(sb.addToScoreboard(nick2));
         System.out.println(sb.toString());
         System.out.println(sb.addToScoreboard(nick3));
-        System.out.println(sb.toString());*/
+        System.out.println(sb.toString());
     }
 
 }

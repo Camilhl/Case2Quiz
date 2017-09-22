@@ -37,21 +37,23 @@
                     '<h2 id="questionheader">Question ' + numOfQuestions + '</h2>' +
                     '<label>Question:</label>' +
                     '<input name=0 id="q' + numOfQuestions + '" type="text" class="form-control">' +
+                    '<label>Picture url:</label>' +
+                    '<input name=0 id="p' + numOfQuestions + '" type="text" class="form-control">' +
                     '<label>Time-limit (secounds):</label>' +
                     '<input name=0 id="t' + numOfQuestions + '" type="number" class="form-control">' +
                     '<label>Answer-alternatives : (use checkbox to set the right answer)</label>' +
                     '<br>' +
                     '<div class="radio">' +
-                    '<label><input type="radio" name="selectanswer' + numOfQuestions + '" onfocus="selectAnswer(' + numOfQuestions +', 0)"  id="a1' + numOfQuestions +'">Option 1</label>' +
+                    '<label><input type="radio" name="selectanswer' + numOfQuestions + '" onfocus="selectAnswer(' + numOfQuestions +', 0)"><input class="form-control" id="a1' + numOfQuestions + '" type="text" value="Camilla"></label>' +
                     '</div>' +
                     '<div class="radio">' +
-                    '<label><input type="radio" name="selectanswer' + numOfQuestions + '" onfocus="selectAnswer(' + numOfQuestions + ', 1)"  id="a2' + numOfQuestions + '">Option 1</label>' +
+                    '<label><input type="radio" name="selectanswer' + numOfQuestions + '" onfocus="selectAnswer(' + numOfQuestions + ', 1)"><input class="form-control" id="a2' + numOfQuestions + '" type="text" value="Camilla"></label>' +
                     '</div>' +
                     '<div class="radio">' +
-                    '<label><input type="radio" name="selectanswer' + numOfQuestions + '" onfocus="selectAnswer(' + numOfQuestions +', 2)"  id="a3' + numOfQuestions + '">Option 1</label>' +
+                    '<label><input type="radio" name="selectanswer' + numOfQuestions + '" onfocus="selectAnswer(' + numOfQuestions +', 2)"><input class="form-control" id="a3' + numOfQuestions + '" type="text" value="Camilla"></label>' +
                     '</div>' +
                     '<div class="radio">' +
-                    '<label><input type="radio" name="selectanswer' + numOfQuestions + '" onfocus="selectAnswer(' + numOfQuestions +', 3)"  id="a4' + numOfQuestions + '">Option 1</label>' +
+                    '<label><input type="radio" name="selectanswer' + numOfQuestions + '" onfocus="selectAnswer(' + numOfQuestions +', 3)"><input class="form-control" id="a4' + numOfQuestions + '" type="text" value="Camilla"></label>' +
                 '</div></div><br>');
 
                 /*$("p").append('<div class="container" id="qBox">' +
@@ -66,50 +68,67 @@
             });
 
 
+
             $("#submit").click(function () {
-                $.ajax({
-                    url: 'rest/quizzes',
-                    type: 'POST',
-                    data: JSON.stringify({
-                        "name": $("#quizName").val(),
-                        "startTime": $("#time").val()
-                    }),
-
-                    contentType: 'application/json; charset=utf-8', //''application/json; charset=utf-8',
-                    dataType: 'json',
-
-
-                    success: function (result) {
-                        alert("QUIZNAME added successfully")
-                    },
-                });
-
-                for (i = 0; i <= numOfQuestions; i++) {
-                    var q = "#q" + i + "";
-                    var t = "#t" + i + "";
-                    var a1 = "#a1" + i + "";
-                    var a2 = "#a2" + i + "";
-                    var a3 = "#a3" + i + "";
-                    var a4 = "#a4" + i + "";
-                    console.log("question 1: " + q);
+                if($("#quizName").val() == ""){
+                    alert("WARNING:\nYou have to chose a NAME for your quiz!");
+                } else if($("#time").val() == ""){
+                    alert("WARNING:\nYou have to chose a STARTING TIME for your quiz!");
+                }else{
                     $.ajax({
-                        url: 'rest/quizzes/' + $("#quizName").val() + '/questions',
+                        url: 'rest/quizzes',
                         type: 'POST',
                         data: JSON.stringify({
-                            "question": $(q).val(),
-                            "timeLimit": $(t).val(),
-                            "answers": [$(a1).val(), $(a2).val(), $(a3).val(), $(a4).val()],
-                            "rightAnswerIndex": correctAnswer[i],
+                            "name": $("#quizName").val(),
+                            "startTime": $("#time").val()
                         }),
-                        contentType: 'application/json; charset=utf-8',
+
+                        contentType: 'application/json; charset=utf-8', //''application/json; charset=utf-8',
                         dataType: 'json',
 
+
                         success: function (result) {
-                            alert("QUESTION added successfully");
-                        }
-
-
+                            alert("QUIZNAME added successfully")
+                        },
                     });
+
+                    for (i = 0; i <= numOfQuestions; i++) {
+                        var q = "#q" + i + "";
+                        var p = "#p" + i + "";
+                        var t = "#t" + i + "";
+                        var a1 = "#a1" + i + "";
+                        var a2 = "#a2" + i + "";
+                        var a3 = "#a3" + i + "";
+                        var a4 = "#a4" + i + "";
+                        console.log("question 1: " + q);
+                        $.ajax({
+                            url: 'rest/quizzes/' + $("#quizName").val() + '/questions',
+                            type: 'POST',
+                            data: JSON.stringify({
+                                "question": $(q).val(),
+                                "timeLimit": $(t).val(),
+                                "answers": [$(a1).val(), $(a2).val(), $(a3).val(), $(a4).val()],
+                                "rightAnswerIndex": correctAnswer[i],
+                                "url": $(p).val(),
+                            }),
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: 'json',
+
+                            success: function (result) {
+                                alert("QUESTION added successfully");
+                                window.location.href = 'MainWindow.html';
+                            },
+
+                            statusCode: {
+                                500: function () {
+                                    alert("WARNING: Questions were not added successfully.\nPlease click ''Submit'' one more time!");
+                                }
+
+                            },
+
+
+                        });
+                    }
                 }
 
 
@@ -133,7 +152,7 @@
     </div>
 </nav>-->
 <ul id="topMenu">
-    <li id="topMenuOptions"><img id="toplogo" src="https://image.ibb.co/mM8dUQ/Les_Quizerables.jpg" alt="Logo" height="60" width="120"></li>
+    <li id="topMenuOptions"><img id="toplogo" src="https://image.ibb.co/mM8dUQ/Les_Quizerables.jpg" alt="Logo" height="100" width="200"></li>
     <li id="topMenuOptions"><a href="Frontpage.html">Home</a></li>
     <li id="topMenuOptions"><a href="MainWindow.html">Start quizzing!</a></li>
     <li id="topMenuOptions"><a href="regNewQuiz.html">Create new quiz</a></li>
@@ -157,22 +176,25 @@
         <label>Question:</label>
         <input name=0 id="q0" type="text" class="form-control">
 
+        <label>Picture url:</label>
+        <input name=0 id="p0" type="text" class="form-control">
+
         <label>Time-limit (secounds):</label>
         <input name=0 id="t0" type="number" class="form-control">
 
         <label>Answer-alternatives : (use checkbox to set the right answer)</label>
         <br>
         <div class="radio">
-            <label><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '0')"  id="a10">Option 1</label>
+            <label><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '0')"><input class="form-control" id="a10" type="text" value="Camilla"></label>
         </div>
         <div class="radio">
-            <label><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '1')"  id="a20">Option 1</label>
+            <label><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '1')" ><input class="form-control" id="a20" type="text" value="Nora"></label></label>
         </div>
         <div class="radio">
-            <label><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '2')"  id="a30">Option 1</label>
+            <label><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '2')"><input class="form-control" id="a30" type="text" value="Eline"></label></label>
         </div>
         <div class="radio">
-            <label><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '3')"  id="a40">Option 1</label>
+            <label><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '3')"><input class="form-control" id="a40" type="text" value="Dina"></label></label>
         </div>
 
 

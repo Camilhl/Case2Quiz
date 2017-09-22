@@ -14,9 +14,9 @@ import java.util.Map;
 public class Quiz {
     private ArrayList<Question> questions = new ArrayList<>();
     private String name;
-    private String startTime;
-    private static Map<String,Nick> players = new HashMap<>();
-    private Nick[] scoreboard = new Nick[10];
+    private Date startTime;
+    private ArrayList<Nick> players = new ArrayList<>();
+
 
 
    /* public Quiz(String name, ArrayList<Question> q, String startTime) {
@@ -28,12 +28,12 @@ public class Quiz {
 
     public Quiz(){}
 
-    public Quiz(String name, String starttime){
+    public Quiz(String name, Date starttime){
         this.name= name;
         this.startTime=starttime;
     }
 
-    public String getStartTime() {
+    public Date getStartTime() {
         return startTime;
     }
 
@@ -46,18 +46,15 @@ public class Quiz {
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm");
         try{
             Date date = (Date)formatter.parse(startTime);
+            this.startTime = date;
         }catch(Exception e){
             System.out.println(e.toString() + "Ikke en dato!!!!!!");
         }
-        this.startTime = startTime;
+
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Nick[] getScoreboard() {
-        return scoreboard;
     }
 
     public boolean addQuestion(Question q){
@@ -70,14 +67,18 @@ public class Quiz {
         }
     }
 
-    public String toString() {
+    /* public String toString() {
         String output = "";
         for(int i = 0; i < questions.size(); i++){
             output += questions.get(i).getQuestion();
         }
         return output;
-    }
+    }*/
 
+
+    public ArrayList<Nick> getPlayers() {
+        return players;
+    }
 
     public ArrayList<Question> getQuestions() {
         return questions;
@@ -87,27 +88,20 @@ public class Quiz {
         return questions.get(index);
     }
 
-    public void addNick(Nick nick){
-        players.put(nick.getNickname(), nick);
-
-    }
-
-    public Map<String,Nick> getNicks(){
-        return players;
-    }
 
     public boolean addToScoreboard(Nick nick){
         String name = nick.getNickname();
         int points = nick.getScore();
 
-        for(int i = 0; i < scoreboard.length; i++){
-            if(scoreboard[i] == null){
-                scoreboard[i] = new Nick(nick.getNickname(), nick.getScore());
+        for(int i = 0; i < 10; i++){
+            if(players.size() < 10){
+
+                players.add(new Nick(nick.getNickname(), nick.getScore()));
                 innsettingssort();
                 return true;
             }
-            else if(scoreboard[i].getScore() < points){
-                scoreboard[scoreboard.length - 1] = new Nick(nick.getNickname(), nick.getScore());
+            else if(players.get(i).getScore() < points){
+                players.add(players.size() - 1, new Nick(nick.getNickname(), nick.getScore()));
                 innsettingssort();
                 return true;
             }
@@ -121,31 +115,68 @@ public class Quiz {
      */
     public void innsettingssort(){
 
-        for (int j = 1; j < scoreboard.length; ++j) {
-            Nick byttNick = scoreboard[j];
+
+        for (int j = 1; j < players.size(); ++j) {
+            Nick byttNick = players.get(j);
 
             //sett t[j] på rett plass:
             int i = j - 1;
-            while (i >= 0 && scoreboard[i] !=null && scoreboard[j] != null && scoreboard[i].getScore() < byttNick.getScore()) {
-
-                scoreboard[i + 1] = scoreboard[i];
+            while (i >= 0 && players.get(i) !=null && players.get(j) != null && players.get(i).getScore() < byttNick.getScore()) {
+                players.remove(i+1);
+                players.add(i+1, players.get(i));
                 i--;
             }
-            scoreboard[i + 1] = byttNick;
+            players.remove(i+1);
+            players.add(i + 1, byttNick);
 
         }
     }
 
+    public String toString(){
+        String s = "";
+        for(int i = 0; i < players.size(); i++){
+            if(players.get(i) != null){
+                s += "Name: " + players.get(i).getNickname() + ", Points: " + players.get(i).getScore() + "\n";
+            }
+        }
+        return s;
+    }
+
     public static void main(String[]args){
         Quiz q = new Quiz();
-        String[] s = {"line", "camilla", "sara", "trude"};
+        /*String[] s = {"line", "camilla", "sara", "trude"};
         q.addQuestion(new Question("Hva heter jeg?", 10, s, 1));
-        System.out.println(q.toString());
         System.out.println(q.getQuestions().get(0).getAnswers()[0]);
         System.out.println(q.getQuestions().get(0).getAnswers()[1]);
         System.out.println(q.getQuestions().get(0).getAnswers()[2]);
         System.out.println(q.getQuestions().get(0).getAnswers()[3]);
         System.out.println(q.getQuestions().get(0).getTimeLimit());
-        System.out.println(q.getQuestions().get(0).getRightAnswerIndex());
+        System.out.println(q.getQuestions().get(0).getRightAnswerIndex());*/
+
+        Nick nick1 = new Nick("Camilla", 10);
+        Nick nick2 = new Nick("Nora", 5);
+        Nick nick3 = new Nick("Kimia", 7);
+        Nick nick4 = new Nick("line", 3);
+        Nick nick5 = new Nick("dina", 13);
+        Nick nick6 = new Nick("olivia", 8);
+
+        System.out.println(q.addToScoreboard(nick1));
+        System.out.println(q.toString());
+        System.out.println(q.addToScoreboard(nick2));
+        System.out.println(q.toString());
+        System.out.println(q.addToScoreboard(nick3));
+        System.out.println(q.toString());
+        System.out.println(q.addToScoreboard(nick4));
+        System.out.println(q.toString());
+        System.out.println(q.addToScoreboard(nick5));
+        System.out.println(q.toString());
+        System.out.println(q.addToScoreboard(nick6));
+        System.out.println(q.toString());
+        q.getPlayers().get(1).addPoint();
+        q.getPlayers().get(3).addPoint();
+        q.getPlayers().get(3).addPoint();
+        q.innsettingssort();
+        System.out.println(q.toString());
+
     }
 }

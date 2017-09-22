@@ -7,6 +7,10 @@
     <link rel="stylesheet" type="text/css" href="Style.css">
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="http://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="jquery-3.2.1.min.js"></script>
     <script language="javascript">
 
@@ -16,7 +20,9 @@
 
         var correctAnswer;
 
-        var nickname = "Anonymus"; //hardkodet for testing!!!!!
+        var nickname;
+
+        var quizIndex;
 
         var quizName;
 
@@ -24,15 +30,32 @@
 
         var numberOfQuestions;
 
+
+
         $(document).ready(function() {
+
+            quizName = getParameterByName('quizName');
+            nickname= getParameterByName('nickname');
+
+
             $.get("rest/quizzes/", function (quizzes) {
                 if (quizzes != null) {
 
-                    quizName = quizzes[0].name; //hardkodet for testing
+                    for(i = 0; i < quizzes.length; i++){
+                        if(quizzes[i].name == quizName){
+                            quizIndex = i;
+                        }
+                    }
+
+                   // quizName = quizzes[quizIndex].name; //hardkodet for testing
 
                     $("#quizName").append('' + quizName + ''); //sets the headline "quiz name"
 
-                    $("#quizStarts").append('' + quizzes[0].startTime + ''); //sets the headline "quiz name"
+                    var newDate = new Date(quizzes[quizIndex].startTime);
+                    var outputDate = newDate.getDate() + "/" + (newDate.getMonth() + 1) + "/" + newDate.getFullYear() + ", at " + newDate.getHours() + ":" + newDate.getMinutes();
+
+
+                    $("#quizStarts").append('' + outputDate + ''); //sets the headline "quiz name"
 
                     console.log("round: " + round);
 
@@ -96,6 +119,7 @@
 
                     });
 
+
                 }else{
                     alert("Sorry wrong answer..")
                 }
@@ -113,9 +137,6 @@
 
             $.get("rest/quizzes/" + quizName + "/questions", function(questions) { //gets all the questions for the quiz
 
-
-
-
                     if (round > 0) {
                         $("#timer").remove();
                         $("#quest").remove();
@@ -131,6 +152,7 @@
                         $("#space").remove();
                         $("#space").remove();
                         $("#space").remove();
+                        $("#questpic").remove();
 
                     }
                 console.log("round: " + round + "\nq-length: " + questions.length)
@@ -142,7 +164,11 @@
 
                     $("#timeLeft").append('<p id="timer" type="number">Time for this question: ' + countdown + '</p>'); //sets the time that the quiz started
 
-                    $("#question").append('<p id="quest">Question: ' + questions[round].question + '</p>'); //sets the first question
+                    $("#question").append('<p id="quest">Question: ' + questions[round].question + '</p>');
+
+                    if(questions[round].url != null){
+                        $("#picture").append('<img id="questpic" class="col-sm-6" src="' + questions[round].url + '" alt="Error in loading picture.." width="100%" height="100%">'); //sets the first question')
+                    }//$("#picture").append('<img id="questpic" src="' + questions[round].url + '" alt="Error in loading picture.." width="50%">'); //sets the first question
 
                     correctAnswer = questions[round].rightAnswerIndex;
                     console.log("correct: " + correctAnswer);
@@ -155,31 +181,76 @@
                     clearInterval(interval);
                     $("#quizStarts").remove();
                     $("#submit").remove();
-                    $("#timeLeft").append('<h2>The quiz is now over! Click the button to see scoreboard!</h2><br><button onclick="showScoreboard()">Scoreboard!</button>')
+                    $("#finish").append('<h2>The quiz is now over! Click the button to see scoreboard!</h2><br>'+
+                        '<button id="scoreBoard" type="button" class="btn btn-primary btn-block" onclick="showScoreboard()">Scoreboard</button>');
+
 
                 }
 
             });
         }
+
+        function showScoreboard(){
+            var text = "!SCOREBOARD!\n"
+            var placing = 1;
+
+            $.get("rest/quizzes/" + quizName + "/players", function (data) {
+
+                if(data != null) {
+                    for (i = 0; i < data.length && i < 10; i++) {
+                        if(data[i] != null) {
+                            text += (placing) + " : " + data[i].nickname + ", score: " + data[i].score + "\n";
+                            placing += 1;
+                        }
+                    }
+                }
+
+                alert(text);
+
+            });
+        }
+
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
     </script>
 </head>
 <body>
 <ul id="topMenu">
-    <li id="topMenuOptions"><img id="toplogo" src="https://image.ibb.co/mM8dUQ/Les_Quizerables.jpg" alt="Logo" height="60" width="120"></li>
+    <li id="topMenuOptions"><img id="toplogo" src="https://image.ibb.co/mM8dUQ/Les_Quizerables.jpg" alt="Logo" height="100" width="200"></li>
     <li id="topMenuOptions"><a href="Frontpage.html">Home</a></li>
     <li id="topMenuOptions"><a href="MainWindow.html">Start quizzing!</a></li>
     <li id="topMenuOptions"><a href="regNewQuiz.html">Create new quiz</a></li>
     <li id="topMenuOptions"><a href="#contact">Contact</a></li>
     <li id="topMenuOptions"><a href="#about">About</a></li>
 </ul>
-<h1 id="quizName">Quiz: </h1>
-<h1 id="quizStarts">Quiz starts at: </h1>
-
-<h3 id="timeLeft"></h3>
-<h3 id="question"></h3>
-
-<div id="answers">
+<a></a>
+<div class="container">
+<h2 id="quizName">Quiz: </h2>
+<h2 id="quizStarts">Quiz start(ed) at: </h2>
 </div>
-<button id="submit" onclick="submit()">Submit</button>
+<div class="container" id="qBox">
+    <div class="row">
+        <div class="col-sm-12">
+            <h4 id="finish"></h4>
+        </div>
+        <div class="col-sm-6">
+        <h4 id="timeLeft"></h4>
+        <h3 id="question"></h3>
+        <div id="answers"></div>
+            <button id="submit" type="button" class="btn btn-success btn-lg" onclick="submit()">Submit answer</button>
+        </div>
+        <div class="col-sm-6">
+        <p id="picture"></p>
+        </div>
+    </div>
+</div>
+<br>
 </body>
 </html>

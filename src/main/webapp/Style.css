@@ -1,6 +1,4 @@
-.body{
-    background-color: 333;
-}
+
 
 #newA {
     text-decoration: underline;
@@ -81,9 +79,38 @@
 }
 
 #joinButton:hover, #scoreboardButton:hover {
-    //background-color: #eeeeee;
+    background-color: #eeeeee;
 }
 
 .container{
     padding: 20px;
+}
+
+h2 {
+    color: darkolivegreen;
+    text-align: center;
+
+}
+
+body {
+    background-color: #ff9666;
+}
+
+#midlogo{
+    padding: 20px;
+    margin-left: 430px;
+}
+
+#picture{
+    float: right;
+}
+
+#cont2 {
+    border: 1px solid #ffb492;
+    background-color: #ffeee6;
+}
+
+#cont1 {
+    border: 1px solid #ffb492;
+    background-color: #ffeee6;
 }

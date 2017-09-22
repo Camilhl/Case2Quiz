@@ -66,31 +66,15 @@ public class Main {
     @Path("/{quizName}/players")
     @Consumes(MediaType.APPLICATION_JSON)
     public void setPlayer(@PathParam("quizName") String quizName, Nick nick) {
-        quizzes.get(quizName).addNick(nick);
         quizzes.get(quizName).addToScoreboard(nick);
+        //quizzes.get(quizName).addToScoreboard(nick);
     }
 
     @GET
     @Path("/{quizName}/players")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Nick> getNicks(@PathParam("quizName") String quizName) {
-        return quizzes.get(quizName).getNicks();
-    }
-
-    @POST
-    @Path("/{quizName}/scoreboard")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public boolean addToScoreboard(@PathParam("quizName") String quizName, Nick nick) {
-        return quizzes.get(quizName).addToScoreboard(nick);
-    }
-
-    @GET
-    @Path("/{quizName}/scoreboard")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Nick[] getScoreBoard(@PathParam("quizName") String quizName) {
-
-        return quizzes.get(quizName).getScoreboard();
-
+    public ArrayList<Nick> getNicks(@PathParam("quizName") String quizName) {
+        return quizzes.get(quizName).getPlayers();
     }
 
     @PUT
@@ -98,26 +82,25 @@ public class Main {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public void setScore(@PathParam("quizName") String quizName, @PathParam("nickname") String nickname) {
-        Nick nick = quizzes.get(quizName).getNicks().get(nickname);
-        nick.addPoint();
-        quizzes.get(quizName).addNick(nick);
-        quizzes.get(quizName).addToScoreboard(nick);
-
+        for(int i = 0; i < quizzes.get(quizName).getPlayers().size(); i++) {
+            if(quizzes.get(quizName).getPlayers().get(i).getNickname().equals(nickname)){
+                quizzes.get(quizName).getPlayers().get(i).addPoint();
+                quizzes.get(quizName).innsettingssort();
+            }
+        }
     }
 
     @GET
     @Path("{quizName}/players/{nickname}")
     @Produces(MediaType.APPLICATION_JSON)
     public Nick getNick(@PathParam("quizName") String quizName, @PathParam("nickname") String nickname) {
-        return quizzes.get(quizName).getNicks().get(nickname);
-    }
+        for(int i = 0; i < quizzes.get(quizName).getPlayers().size(); i++) {
+            if(quizzes.get(quizName).getPlayers().get(i).getNickname().equals(nickname)){
+                return quizzes.get(quizName).getPlayers().get(i);
+            }
+        }
 
-    @DELETE
-    @Path("{quizName}/players/{nickname}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public void deleteNick(@PathParam("quizName") String quizName, @PathParam("nickname") String nickname) {
-        quizzes.get(quizName).getNicks().remove(nickname);
-
+        return null;
     }
 }
 
