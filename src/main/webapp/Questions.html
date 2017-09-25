@@ -151,6 +151,10 @@
 
         };
 
+        function scoreboardButton(){
+            window.location.href = 'ScoreBoard.html?quizName=' + quizName;
+        }
+
 
         /**
          * Loads the next question.
@@ -204,7 +208,7 @@
                     $("#quizStarts").remove();
                     $("#submit").remove();
                     $("#finish").append('<h2>The quiz is now over! Click the button to see scoreboard!</h2><br>'+
-                        '<button id="scoreBoard" type="button" class="btn btn-primary btn-block" onclick="showScoreboard()">Scoreboard</button>');
+                        '<button id="scoreBoard" onclick="scoreboardButton()" type="button" class="btn btn-primary btn-block">Scoreboard</button>');
 
 
                 }
@@ -236,7 +240,7 @@
         }
 
         /**
-         * Premade code that gets out the nickname and the quizname as parameters in the url.
+         * Premade function that gets out the nickname and the quizname as parameters in the url.
          *
          * @param name
          * @param url

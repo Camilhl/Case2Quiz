@@ -67,6 +67,10 @@
             $.get("rest/quizzes/", function (data) {
                 quizName = data[quizNumber].name;
 
+                window.location.href = 'ScoreBoard.html?quizName=' + quizName;
+
+                /*
+
                 $.get("rest/quizzes/" + quizName + "/players", function (data) {
 
                     if(data != null) {
@@ -80,7 +84,7 @@
 
                     alert(text);
 
-                });
+                });*/
             });
 
         }

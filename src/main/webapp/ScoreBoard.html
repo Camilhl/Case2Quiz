@@ -7,9 +7,60 @@
     <link rel="stylesheet" type="text/css" href="Style.css">
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="http://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="jquery-3.2.1.min.js"></script>
     <script language="javascript">
 
+        var quizName;
+
+        $(document).ready(function() {
+
+            //using the function getParameterByName to set the variables quizName and nickname
+            quizName = getParameterByName('quizName');
+
+            showScoreboard();
+
+        });
+
+        function showScoreboard(){
+            var placing = 1;
+
+            $.get("rest/quizzes/" + quizName + "/players", function (data) {
+
+                if(data != null) {
+                    for (i = 0; i < data.length; i++) {
+                        if(data[i] != null) {
+                            $("#cont4").append('<div class="row">'
+                                + '<div name="quizzes" class="col-sm-4" style="background-color:#ffdccc;">' + placing + '</div>'
+                                + '<div class="col-sm-4" style="background-color:#ffcbb3;">' + data[i].nickname + '</div>'
+                                + '<div class="col-sm-4" style="background-color:#ffdccc;">' + data[i].score + '</div></div>');
+                        placing += 1;
+                        }
+                    }
+                }
+
+            });
+        }
+
+        /**
+         * Premade function that gets out the nickname and the quizname as parameters in the url.
+         *
+         * @param name
+         * @param url
+         * @returns {*}
+         */
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
     </script>
 </head>
 <body>
@@ -19,7 +70,19 @@
     <li id="topMenuOptions"><a href="MainWindow.html">Start quizzing!</a></li>
     <li id="topMenuOptions"><a href="regNewQuiz.html">Create new quiz</a></li>
 </ul>
-<h1>Score Board</h1>
+<br>
+<br>
+
+<div class="container" id="cont4">
+    <h2 id="mainWindowHeadline2">Scoreboard</h2>
+    <ul id="futureQuizzes" style="list-style-type:disc">
+    </ul>
+    <div class="row">
+        <div name="quizzes" class="col-sm-4" style="background-color:#ffdccc;"><dt>Placing</dt></div>
+        <div class="col-sm-4" style="background-color:#ffcbb3;"><dt>Nickname</dt></div>
+        <div class="col-sm-4" style="background-color:#ffdccc;"><dt>Score</dt></div>
+    </div>
+</div>
 
 </body>
 </html>
