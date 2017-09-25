@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 /**
  * Created by camhl on 9/14/2017.
+ * Class Question has a lot of information about a spesific question in a quiz and only get - and set - methods
  */
 public class Question {
     private String question;

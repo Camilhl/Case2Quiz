@@ -18,8 +18,7 @@ public class Main {
 
 
     /**
-     * Using POST in /quizzes/ to add a new Quiz to the site
-     *
+     * Using POST in rest/quizzes/ to add a new Quiz to the site
      * @param quiz
      */
     @POST
@@ -29,8 +28,11 @@ public class Main {
 
     }
 
+
     /**
-     * Using PUT in /quizzes/{quizName}/ to update a spesific quiz with a new question with four answer-alternatives
+     * Using PUT in rest/quizzes/{quizName}/ to update a spesific quiz with a new question with four answer-alternatives
+     * @param quizName
+     * @param question
      */
     @POST
     @Path("{quizName}/questions")
@@ -42,9 +44,8 @@ public class Main {
 
 
     /**
-     * Using GET in /quizzes/ to gett ALL the quizzes on the site
-     *
-     * @return
+     * Using GET in rest/quizzes/ to gett ALL the quizzes on the site
+     * @return Collection<Quiz>
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -52,7 +53,11 @@ public class Main {
         return quizzes.values();
     }
 
-
+    /**
+     * Using GET in rest/quizzes/{quizname}/questions to get ALL the questions in a quiz
+     * @param quizName
+     * @return ArrayList<Question>
+     */
     @GET
     @Path("/{quizName}/questions")
     @Produces(MediaType.APPLICATION_JSON)
@@ -62,6 +67,11 @@ public class Main {
 
     }
 
+    /**
+     * Using POST in rest/quizzes/{quizname}/players to add a nick to a quiz
+     * @param quizName
+     * @param nick
+     */
     @POST
     @Path("/{quizName}/players")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -70,6 +80,12 @@ public class Main {
         //quizzes.get(quizName).addToScoreboard(nick);
     }
 
+    /**
+     * Using GET in rest/quizzes/{quizname}/players to get all the players/nicks that is registered on a quiz.
+     * Array with nicks is sorted with highest score first.
+     * @param quizName
+     * @return ArrayList<Nick>
+     */
     @GET
     @Path("/{quizName}/players")
     @Produces(MediaType.APPLICATION_JSON)
@@ -77,6 +93,11 @@ public class Main {
         return quizzes.get(quizName).getPlayers();
     }
 
+    /**
+     * Using PUT in rest/quizzes/{quizName}/players/{nickname} to add a point to a player in a quiz
+     * @param quizName
+     * @param nickname
+     */
     @PUT
     @Path("{quizName}/players/{nickname}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -90,6 +111,13 @@ public class Main {
         }
     }
 
+
+    /**
+     * Using GET in rest/quizzes/{quizName}/players/{nickname} to get the spesific nick/player
+     * @param quizName
+     * @param nickname
+     * @return Nick
+     */
     @GET
     @Path("{quizName}/players/{nickname}")
     @Produces(MediaType.APPLICATION_JSON)

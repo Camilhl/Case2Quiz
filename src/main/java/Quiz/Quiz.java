@@ -98,30 +98,19 @@ public class Quiz {
         return questions.get(index);
     }
 
-
-    public boolean addToScoreboard(Nick nick){
+    /**
+     * Adds player to the scoreboard/array of nicks.
+     * @param nick
+     */
+    public void addToScoreboard(Nick nick){
         String name = nick.getNickname();
         int points = nick.getScore();
-
-        for(int i = 0; i < 10; i++){
-            if(players.size() < 10){
-
-                players.add(new Nick(nick.getNickname(), nick.getScore()));
-                innsettingssort();
-                return true;
-            }
-            else if(players.get(i).getScore() < points){
-                players.add(players.size() - 1, new Nick(nick.getNickname(), nick.getScore()));
-                innsettingssort();
-                return true;
-            }
-
-        }
-        return false;
+        players.add(new Nick(nick.getNickname(), nick.getScore()));
+        innsettingssort();
     }
 
     /**
-     * Sorterer listene med nicknames og tilhørende poeng
+     * Sorting the scoreboard-array, nicks with highest score comes first
      */
     public void innsettingssort(){
 
@@ -141,6 +130,7 @@ public class Quiz {
 
         }
     }
+
 
     public String toString(){
         String s = "";
