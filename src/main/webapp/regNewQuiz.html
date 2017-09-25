@@ -17,9 +17,9 @@
     <script src="jquery-3.2.1.min.js"></script>
     <script language="javascript">
 
-        var correctAnswer = [];
+        var correctAnswer = []; //array of the index of correct answer on each question
 
-        var numOfQuestions = 0;
+        var numOfQuestions = 0; //the number of questions
 
         /**
          * Runs everytime an answer-alternative is chosen as the right one and being stored in an array.
@@ -40,8 +40,8 @@
              */
             $("#newQ").click(function(){
                 numOfQuestions += 1;
-                console.log("numberofquestions: " + numOfQuestions);
 
+                //Using numOfQuestions to part each questions-ID from eachother
                 $("p").append('<div class="container" id="qBox">' +
                     '<h2 id="questionheader">Question ' + numOfQuestions + '</h2>' +
                     '<label>Question:</label>' +
@@ -91,7 +91,7 @@
 
                         success: function (result) {
                             alert("QUIZNAME added successfully")
-                            addQuestions();
+                            addQuestions(); //adds the questions AFTER success of adding the quiz
                         },
                     });
                 }
@@ -101,10 +101,11 @@
         });
 
         /**
-         * Runs everytime "subit"-button is being clicked.
-         * Tries to store the quiz and the questions to the rest-server.
+         * Runs when the Quiz is added successfully.
+         * Tries to store Questions of the Quiz to the rest-server.
          */
         function addQuestions(){
+
             for (i = 0; i <= numOfQuestions; i++) {
                 var q = "#q" + i + "";
                 var p = "#p" + i + "";
@@ -113,7 +114,6 @@
                 var a2 = "#a2" + i + "";
                 var a3 = "#a3" + i + "";
                 var a4 = "#a4" + i + "";
-                //console.log("question 1: " + q);
 
                 $.ajax({
                     url: 'rest/quizzes/' + $("#quizName").val() + '/questions',
@@ -130,20 +130,19 @@
 
                     success: function (result) {
                         alert("QUESTION added successfully");
-                        //window.location.href = 'MainWindow.html';
                     },
 
                     statusCode: {
                         500: function () {
                             //alert("WARNING: Questions were not added successfully.\nPlease click ''Submit'' one more time!");
-                            //window.location.href = 'regNewQuiz.html';
+
                             document.getElementById("warning").innerHTML = "Questions were not added successfully.\nPlease click ''Submit'' one more time!";
                         },
                     }
                 });
 
                 if(i == numOfQuestions){
-                    window.location.href = 'MainWindow.html';
+                    window.location.href = 'MainWindow.html'; //sends you to the MainWindow once the quiz was added successfully
                 }
             }
         }
@@ -151,19 +150,6 @@
 </head>
 <body>
 
-<!--<nav class="navbar navbar-default">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="MainWindow.html"><img id="toplogo" src="https://image.ibb.co/mM8dUQ/Les_Quizerables.jpg" alt="Logo" height="60" width="120"></a>
-        </div>
-        <ul class="nav navbar-nav">
-            <li><a href="MainWindow.html">Home</a></li>
-            <li class="active"><a href="regNewQuiz.html">Create new quiz</a></li>
-            <li><a href="#">Contact</a></li>
-            <li><a href="#">About</a></li>
-        </ul>
-    </div>
-</nav>-->
 <ul id="topMenu">
     <li id="topMenuOptions"><img id="toplogo" src="https://image.ibb.co/mM8dUQ/Les_Quizerables.jpg" alt="Logo" height="100" width="200"></li>
     <li id="topMenuOptions"><a href="Frontpage.html">Home</a></li>

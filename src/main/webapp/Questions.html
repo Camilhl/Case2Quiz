@@ -14,40 +14,35 @@
     <script src="jquery-3.2.1.min.js"></script>
     <script language="javascript">
 
-        var round = 0;
+        var round = 0; //index of the question we are currently on
 
-        var answerChosen;
+        var answerChosen; //index of the answer-alternative that is chosen on a spesific question
 
-        var correctAnswer;
+        var correctAnswer; //index of the correct answer-alternative on a spesific question
 
-        var nickname;
+        var nickname; //nickname of the player
 
-        var quizIndex;
+        var quizIndex; //index of the quiz in the array of all the quizzes
 
-        var quizName;
+        var quizName; //name of the spesific quiz
 
-        var countdown;
+        var countdown; //will be set to the timeLimit of each question and counted down
 
-        var numberOfQuestions;
+        var newDate; //date/time of the quiz-start
 
-        var quizLength;
+        var interval; //will be the interval for countdownFunction()
 
-        var endDate;
+        var interval2 = setInterval(checkTime, 1000); //interval for checkTime()
 
-        var newDate;
-
-        var interval;
-
-        //var haveloadedquestions = -1;
         /**
          * Runs when site is opened.
          * Sets parameters quizName, nickname, startingdate.
          */
         $(document).ready(function() {
 
+            //using the function getParameterByName to set the variables quizName and nickname
             quizName = getParameterByName('quizName');
             nickname= getParameterByName('nickname');
-
 
             $.get("rest/quizzes/", function (quizzes) {
                 if (quizzes != null) {
@@ -63,13 +58,7 @@
                     newDate = new Date(quizzes[quizIndex].startTime); //creates the date when the quiz starts
                     var outputDate = newDate.getDate() + "/" + (newDate.getMonth() + 1) + "/" + newDate.getFullYear() + ", at " + newDate.getHours() + ":" + newDate.getMinutes();
 
-                    /*quizLength = quizzes[quizIndex].totalTime; //all the questions timelimit summed
-                    endDate = new Date(quizzes[quizIndex].startTime);
-                    endDate.setSeconds(endDate.getSeconds() + quizLength);*/
-
                     $("#quizStarts").append('' + outputDate + ''); //sets the headline "quiz name"
-
-                    //console.log("round: " + round);
                 }
             });
         });
@@ -82,64 +71,36 @@
             if(countdown >= 0) {
                 document.getElementById("timer").innerHTML = "Time left this question: " + countdown;
 
-                if(countdown <= 10){
-                    //document.getElementById("timer").innerHTML = '<div class="bg-danger">Time left this question:' + countdown + '</div>';
-
+                if(countdown <= 10){ //changes color to red when it is 10 secounds left of the question
                     document.getElementById("timer").style.color="red";
                 }
                 if(countdown > 10){
-                    //document.getElementById("timer").innerHTML = "Time left this question: " + countdown;
                     document.getElementById("timer").style.color="black";
 
                 }
             }
-            else{
+            else{ //the countdown == -1 and the time is out. Function submit() is running.
                 submit();
             }
         }
 
 
         /**
-         * Checks if the current time > start time to check when the quiz should start.
+         * Checks if the current time > start time to check if the quiz should start.
          */
-        var interval2 = setInterval(checkTime, 1000);
         function checkTime(){
             var currentTime = new Date();
-            var secoundsInto;
 
-            if(currentTime < newDate){ //har ikke begynt enda
-                document.getElementById("question").innerHTML = "Secounds until start: " + Math.round((newDate-currentTime)/1000) + "";
+            if(currentTime < newDate){ //the quiz has not yet started
+                document.getElementById("question").innerHTML = "Secounds until start: " + Math.round((newDate-currentTime)/1000) + ""; //counts down secounds until start
             }
-            else{
-                clearInterval(interval2);
+            else{ //currentTime == newDate and the quiz should start
+                clearInterval(interval2); //stops the interval of thid function
                 $("#button").append('<button id="submit" type="button" class="btn btn-success btn-lg" onclick="submit()">Submit answer</button>');
                 document.getElementById("question").innerHTML = "";
 
-                /*$.get("rest/quizzes/" + quizName + "/questions", function (questions) {
-                    secoundsInto = Math.round((currentTime - newDate)/1000);
-                    var ok = true;
-                    var i = 0;
-                    while(ok == true && i < questions.length){
-                        console.log("Secoundsinto: " + secoundsInto);
-                        console.log("i = " + i + "\nquestions.length = " + questions.length);
-
-                        if((secoundsInto) > questions[i].timeLimit){
-                            round += 1;
-                            secoundsInto -= questions[i].timeLimit;
-                        } else {
-                            ok = false;
-                        }
-                        i++;
-                    }
-
-
-
-                });*/
-
-                //countdown = questions[round].timeLimit;
-
-                countdown = 10;
-                interval = setInterval(countdownFunction, 1000);
+                countdown = 10; //sets countdown to 10 just so the countdownFunction can run until the actual countdown-value in loadQuestion() is set..
+                interval = setInterval(countdownFunction, 1000); //starts the interval of 1 secound to the countdownFunction
                 loadQuestion();
             }
 
@@ -161,37 +122,32 @@
          */
         function submit() {
             if (answerChosen != null) {
-                if (answerChosen == correctAnswer) {
-                    $.ajax({
+                if (answerChosen == correctAnswer) { //the answer was correct
+                    $.ajax({ //Using PUT to add e point to the player
                         url: 'rest/quizzes/' + quizName + '/players/' + nickname,
                         type: 'PUT',
-                        //data: '1',
                         contentType: 'application/json; charset=utf-8',
                         dataType: 'json',
 
                         success: function (result) {
                             alert("Correct answer! 1 point to you!");
                         },
+
                         statusCode: {
                             404: function () {
                                 alert("404: could not find user");
                             }
-
                         },
-
-
                     });
-
-
-                }else{
+                }else{ //wrong answer
                     alert("Sorry wrong answer..")
                 }
-            } else{
+            } else{ //answer == null, didn't choose an answer
                 alert("You didn't chose an answer. No points for you..")
             }
-            showScoreboard();
-            round += 1;
-            loadQuestion();
+            showScoreboard(); //shows the live scoreboard of the quiz
+            round += 1; //adds 1 to the variable round, because we are done with a question/one round
+            loadQuestion(); //loads new question
 
         };
 
@@ -203,8 +159,6 @@
         function loadQuestion() {
 
             var currentTime = new Date();
-
-            //console.log("round: " + round);
 
             $.get("rest/quizzes/" + quizName + "/questions", function(questions) { //gets all the questions for the quiz
 
@@ -226,24 +180,20 @@
                     $("#questpic").remove();
 
                 }
-                //console.log("round: " + round + "\nq-length: " + questions.length);
+
                 if (round != questions.length) { //we are not done with the quiz
 
-                    countdown = questions[round].timeLimit;
-                    //console.log("timelimit: " + countdown);
-                    //console.log("question: " + questions[round].question);
+                    countdown = questions[round].timeLimit; //sets the countdown variable to the timelimit of the question
 
                     $("#timeLeft").append('<p id="timer" type="number">Time for this question: ' + countdown + '</p>'); //sets the time that the quiz started
 
                     $("#question").append('<p id="quest">Question: ' + questions[round].question + '</p>');
 
-                    if(questions[round].url != null){ //adds at the picture if url in the question is not null
+                    if(questions[round].url != null){ //adds the picture if url in the question is not null
                         $("#picture").append('<img id="questpic" class="col-sm-6" src="' + questions[round].url + '" alt="Error in loading picture.." width="100%" height="100%">'); //sets the first question')
-                    }//$("#picture").append('<img id="questpic" src="' + questions[round].url + '" alt="Error in loading picture.." width="50%">'); //sets the first question
+                    }
 
                     correctAnswer = questions[round].rightAnswerIndex;
-                    //console.log("correct: " + correctAnswer);
-
 
                     for (i = 0; i < 4; i++) { //adds all the answer-alternatives
                         $("#answers").append('<p id="answerText"><input type="radio" name="answer" id="answeroptions" onclick="selectAnswer(' + i + ')">' + questions[round].answers[i] + '</p><br id="space">');
@@ -258,9 +208,6 @@
 
 
                 }
-
-                //haveloadedquestions = 1;
-
             });
         }
 
