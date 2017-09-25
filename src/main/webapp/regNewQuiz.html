@@ -21,14 +21,23 @@
 
         var numOfQuestions = 0;
 
+        /**
+         * Runs everytime an answer-alternative is chosen as the right one and being stored in an array.
+         * @param questionNumber
+         * @param val
+         */
         function selectAnswer(questionNumber, val){
 
             correctAnswer[questionNumber] = val;
         }
 
+
         $(document).ready(function() {
 
-
+            /**
+             * Runs everytime the "add new question"-button is clicked
+             * Adds another question-input-field to the page.
+             */
             $("#newQ").click(function(){
                 numOfQuestions += 1;
                 console.log("numberofquestions: " + numOfQuestions);
@@ -55,20 +64,13 @@
                     '<div class="radio">' +
                     '<label><input type="radio" name="selectanswer' + numOfQuestions + '" onfocus="selectAnswer(' + numOfQuestions +', 3)"><input class="form-control" id="a4' + numOfQuestions + '" type="text" value="Camilla"></label>' +
                 '</div></div><br>');
-
-                /*$("p").append('<div class="container" id="qBox">' +
-                    '<h2>Question ' + (numOfQuestions+1) + '</h2><input id="q' + numOfQuestions + '" type="text" value="q' + numOfQuestions + '">' +
-                    '<h3>Time (seconds):</h3><input id="t' + numOfQuestions + '" type="number" value="30">' +
-                    '<h3>Answer-alternatives : (use checkbox to set the right answer)</h3><br>' +
-                    '<input type="radio" name="selectanswer" onfocus="selectAnswer("' + numOfQuestions + '", "0")"><input id="a1' + numOfQuestions + '" type="text" value="line"></input><br>' +
-                    '<input type="radio" name="selectanswer" onclick="selectAnswer("' + numOfQuestions + '", "1")"><input id="a2' + numOfQuestions + '" type="text" value="balla"></input><br>' +
-                    '<input type="radio" name="selectanswer" onclick="selectAnswer("' + numOfQuestions + '", "2")"><input id="a3' + numOfQuestions + '" type="text" value="nora"></input> <br>' +
-                    '<input type="radio" name="selectanswer" onclick="selectAnswer("' + numOfQuestions + '", "3")"><input id="a4' + numOfQuestions + '" type="text" value="halla"></input><br>' +
-                '</div><br>');*/
             });
 
 
-
+            /**
+             * Runs everytime "subit"-button is being clicked.
+             * Tries to store the quiz and the questions to the rest-server.
+             */
             $("#submit").click(function () {
                 if($("#quizName").val() == ""){
                     alert("WARNING:\nYou have to chose a NAME for your quiz!");
@@ -89,51 +91,62 @@
 
                         success: function (result) {
                             alert("QUIZNAME added successfully")
+                            addQuestions();
                         },
                     });
-
-                    for (i = 0; i <= numOfQuestions; i++) {
-                        var q = "#q" + i + "";
-                        var p = "#p" + i + "";
-                        var t = "#t" + i + "";
-                        var a1 = "#a1" + i + "";
-                        var a2 = "#a2" + i + "";
-                        var a3 = "#a3" + i + "";
-                        var a4 = "#a4" + i + "";
-                        console.log("question 1: " + q);
-                        $.ajax({
-                            url: 'rest/quizzes/' + $("#quizName").val() + '/questions',
-                            type: 'POST',
-                            data: JSON.stringify({
-                                "question": $(q).val(),
-                                "timeLimit": $(t).val(),
-                                "answers": [$(a1).val(), $(a2).val(), $(a3).val(), $(a4).val()],
-                                "rightAnswerIndex": correctAnswer[i],
-                                "url": $(p).val(),
-                            }),
-                            contentType: 'application/json; charset=utf-8',
-                            dataType: 'json',
-
-                            success: function (result) {
-                                alert("QUESTION added successfully");
-                                window.location.href = 'MainWindow.html';
-                            },
-
-                            statusCode: {
-                                500: function () {
-                                    alert("WARNING: Questions were not added successfully.\nPlease click ''Submit'' one more time!");
-                                }
-
-                            },
-
-
-                        });
-                    }
                 }
 
 
             });
         });
+
+        /**
+         * Runs everytime "subit"-button is being clicked.
+         * Tries to store the quiz and the questions to the rest-server.
+         */
+        function addQuestions(){
+            for (i = 0; i <= numOfQuestions; i++) {
+                var q = "#q" + i + "";
+                var p = "#p" + i + "";
+                var t = "#t" + i + "";
+                var a1 = "#a1" + i + "";
+                var a2 = "#a2" + i + "";
+                var a3 = "#a3" + i + "";
+                var a4 = "#a4" + i + "";
+                //console.log("question 1: " + q);
+
+                $.ajax({
+                    url: 'rest/quizzes/' + $("#quizName").val() + '/questions',
+                    type: 'POST',
+                    data: JSON.stringify({
+                        "question": $(q).val(),
+                        "timeLimit": $(t).val(),
+                        "answers": [$(a1).val(), $(a2).val(), $(a3).val(), $(a4).val()],
+                        "rightAnswerIndex": correctAnswer[i],
+                        "url": $(p).val(),
+                    }),
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+
+                    success: function (result) {
+                        alert("QUESTION added successfully");
+                        //window.location.href = 'MainWindow.html';
+                    },
+
+                    statusCode: {
+                        500: function () {
+                            //alert("WARNING: Questions were not added successfully.\nPlease click ''Submit'' one more time!");
+                            //window.location.href = 'regNewQuiz.html';
+                            document.getElementById("warning").innerHTML = "Questions were not added successfully.\nPlease click ''Submit'' one more time!";
+                        },
+                    }
+                });
+
+                if(i == numOfQuestions){
+                    window.location.href = 'MainWindow.html';
+                }
+            }
+        }
     </script>
 </head>
 <body>
@@ -156,8 +169,6 @@
     <li id="topMenuOptions"><a href="Frontpage.html">Home</a></li>
     <li id="topMenuOptions"><a href="MainWindow.html">Start quizzing!</a></li>
     <li id="topMenuOptions"><a href="regNewQuiz.html">Create new quiz</a></li>
-    <li id="topMenuOptions"><a href="#contact">Contact</a></li>
-    <li id="topMenuOptions"><a href="#about">About</a></li>
 </ul>
 
 <div class="container">
@@ -204,6 +215,7 @@
 <div class="container">
     <button id="newQ" type="button" class="btn btn-info btn-lg">+Add a new question</button>
     <button id="submit" type="button" class="btn btn-success btn-lg">Submit quiz</button>
+    <h4 id="warning" color="red"></h4>
 </div>
 </body>
 </html>

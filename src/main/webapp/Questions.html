@@ -30,8 +30,19 @@
 
         var numberOfQuestions;
 
+        var quizLength;
 
+        var endDate;
 
+        var newDate;
+
+        var interval;
+
+        //var haveloadedquestions = -1;
+        /**
+         * Runs when site is opened.
+         * Sets parameters quizName, nickname, startingdate.
+         */
         $(document).ready(function() {
 
             quizName = getParameterByName('quizName');
@@ -42,31 +53,30 @@
                 if (quizzes != null) {
 
                     for(i = 0; i < quizzes.length; i++){
-                        if(quizzes[i].name == quizName){
+                        if(quizzes[i].name == quizName){ //finding the index in the array of the quiz
                             quizIndex = i;
                         }
                     }
 
-                   // quizName = quizzes[quizIndex].name; //hardkodet for testing
-
                     $("#quizName").append('' + quizName + ''); //sets the headline "quiz name"
 
-                    var newDate = new Date(quizzes[quizIndex].startTime);
+                    newDate = new Date(quizzes[quizIndex].startTime); //creates the date when the quiz starts
                     var outputDate = newDate.getDate() + "/" + (newDate.getMonth() + 1) + "/" + newDate.getFullYear() + ", at " + newDate.getHours() + ":" + newDate.getMinutes();
 
+                    /*quizLength = quizzes[quizIndex].totalTime; //all the questions timelimit summed
+                    endDate = new Date(quizzes[quizIndex].startTime);
+                    endDate.setSeconds(endDate.getSeconds() + quizLength);*/
 
                     $("#quizStarts").append('' + outputDate + ''); //sets the headline "quiz name"
 
-                    console.log("round: " + round);
-
-                    loadQuestion();
-
+                    //console.log("round: " + round);
                 }
             });
         });
 
-        var interval = setInterval(countdownFunction, 1000);
-
+        /**
+         * Counts down the question timelimit
+         */
         function countdownFunction(){
             countdown -= 1;
             if(countdown >= 0) {
@@ -88,17 +98,70 @@
             }
         }
 
-        function selectAnswer(val){
 
-            answerChosen = val;
-            console.log(answerChosen);
+        /**
+         * Checks if the current time > start time to check when the quiz should start.
+         */
+        var interval2 = setInterval(checkTime, 1000);
+        function checkTime(){
+            var currentTime = new Date();
+            var secoundsInto;
+
+            if(currentTime < newDate){ //har ikke begynt enda
+                document.getElementById("question").innerHTML = "Secounds until start: " + Math.round((newDate-currentTime)/1000) + "";
+            }
+            else{
+                clearInterval(interval2);
+                $("#button").append('<button id="submit" type="button" class="btn btn-success btn-lg" onclick="submit()">Submit answer</button>');
+                document.getElementById("question").innerHTML = "";
+
+                /*$.get("rest/quizzes/" + quizName + "/questions", function (questions) {
+                    secoundsInto = Math.round((currentTime - newDate)/1000);
+                    var ok = true;
+                    var i = 0;
+                    while(ok == true && i < questions.length){
+                        console.log("Secoundsinto: " + secoundsInto);
+                        console.log("i = " + i + "\nquestions.length = " + questions.length);
+
+                        if((secoundsInto) > questions[i].timeLimit){
+                            round += 1;
+                            secoundsInto -= questions[i].timeLimit;
+                        } else {
+                            ok = false;
+                        }
+                        i++;
+                    }
+
+
+
+                });*/
+
+                //countdown = questions[round].timeLimit;
+
+                countdown = 10;
+                interval = setInterval(countdownFunction, 1000);
+                loadQuestion();
+            }
+
         }
 
+        /**
+         * Running everytime a question selection is selected.
+         * Sets the variable answerchosen.
+         * @param val
+         */
+
+        function selectAnswer(val){
+            answerChosen = val;
+        }
+
+        /**
+         * Running everytime an answer is submitted and when the time for a question runs out.
+         * Checks if the answer is correct, if so a point is added to the player/nick.
+         */
         function submit() {
             if (answerChosen != null) {
-
                 if (answerChosen == correctAnswer) {
-
                     $.ajax({
                         url: 'rest/quizzes/' + quizName + '/players/' + nickname,
                         type: 'PUT',
@@ -126,58 +189,67 @@
             } else{
                 alert("You didn't chose an answer. No points for you..")
             }
+            showScoreboard();
             round += 1;
             loadQuestion();
 
         };
 
 
-
+        /**
+         * Loads the next question.
+         * Removes the previous question if we are on round >0.
+         */
         function loadQuestion() {
+
+            var currentTime = new Date();
+
+            //console.log("round: " + round);
 
             $.get("rest/quizzes/" + quizName + "/questions", function(questions) { //gets all the questions for the quiz
 
-                    if (round > 0) {
-                        $("#timer").remove();
-                        $("#quest").remove();
-                        $("#answeroptions").remove();
-                        $("#answeroptions").remove();
-                        $("#answeroptions").remove();
-                        $("#answeroptions").remove();
-                        $("#answerText").remove();
-                        $("#answerText").remove();
-                        $("#answerText").remove();
-                        $("#answerText").remove();
-                        $("#space").remove();
-                        $("#space").remove();
-                        $("#space").remove();
-                        $("#space").remove();
-                        $("#questpic").remove();
+                if (round > 0) {
+                    $("#timer").remove();
+                    $("#quest").remove();
+                    $("#answeroptions").remove();
+                    $("#answeroptions").remove();
+                    $("#answeroptions").remove();
+                    $("#answeroptions").remove();
+                    $("#answerText").remove();
+                    $("#answerText").remove();
+                    $("#answerText").remove();
+                    $("#answerText").remove();
+                    $("#space").remove();
+                    $("#space").remove();
+                    $("#space").remove();
+                    $("#space").remove();
+                    $("#questpic").remove();
 
-                    }
-                console.log("round: " + round + "\nq-length: " + questions.length)
-                if (round != questions.length) {
+                }
+                //console.log("round: " + round + "\nq-length: " + questions.length);
+                if (round != questions.length) { //we are not done with the quiz
 
                     countdown = questions[round].timeLimit;
-                    console.log("timelimit: " + countdown);
-                    console.log("question: " + questions[round].question);
+                    //console.log("timelimit: " + countdown);
+                    //console.log("question: " + questions[round].question);
 
                     $("#timeLeft").append('<p id="timer" type="number">Time for this question: ' + countdown + '</p>'); //sets the time that the quiz started
 
                     $("#question").append('<p id="quest">Question: ' + questions[round].question + '</p>');
 
-                    if(questions[round].url != null){
+                    if(questions[round].url != null){ //adds at the picture if url in the question is not null
                         $("#picture").append('<img id="questpic" class="col-sm-6" src="' + questions[round].url + '" alt="Error in loading picture.." width="100%" height="100%">'); //sets the first question')
                     }//$("#picture").append('<img id="questpic" src="' + questions[round].url + '" alt="Error in loading picture.." width="50%">'); //sets the first question
 
                     correctAnswer = questions[round].rightAnswerIndex;
-                    console.log("correct: " + correctAnswer);
+                    //console.log("correct: " + correctAnswer);
 
 
-                    for (i = 0; i < 4; i++) {
+                    for (i = 0; i < 4; i++) { //adds all the answer-alternatives
                         $("#answers").append('<p id="answerText"><input type="radio" name="answer" id="answeroptions" onclick="selectAnswer(' + i + ')">' + questions[round].answers[i] + '</p><br id="space">');
                     }
-                } else{
+
+                } else{ //the quiz is over (the last question has been on the screen)
                     clearInterval(interval);
                     $("#quizStarts").remove();
                     $("#submit").remove();
@@ -187,11 +259,17 @@
 
                 }
 
+                //haveloadedquestions = 1;
+
             });
         }
 
+        /**
+         * Shows the scoreboard on an alert.
+         * Could also put this code into another site to have a seperate scoreboard-site.
+         */
         function showScoreboard(){
-            var text = "!SCOREBOARD!\n"
+            var text = "!LIVE SCOREBOARD!\n";
             var placing = 1;
 
             $.get("rest/quizzes/" + quizName + "/players", function (data) {
@@ -210,6 +288,13 @@
             });
         }
 
+        /**
+         * Premade code that gets out the nickname and the quizname as parameters in the url.
+         *
+         * @param name
+         * @param url
+         * @returns {*}
+         */
         function getParameterByName(name, url) {
             if (!url) url = window.location.href;
             name = name.replace(/[\[\]]/g, "\\$&");
@@ -227,13 +312,12 @@
     <li id="topMenuOptions"><a href="Frontpage.html">Home</a></li>
     <li id="topMenuOptions"><a href="MainWindow.html">Start quizzing!</a></li>
     <li id="topMenuOptions"><a href="regNewQuiz.html">Create new quiz</a></li>
-    <li id="topMenuOptions"><a href="#contact">Contact</a></li>
-    <li id="topMenuOptions"><a href="#about">About</a></li>
 </ul>
 <a></a>
 <div class="container">
 <h2 id="quizName">Quiz: </h2>
 <h2 id="quizStarts">Quiz start(ed) at: </h2>
+    <h2 id="timeuntilStart"></h2>
 </div>
 <div class="container" id="qBox">
     <div class="row">
@@ -244,7 +328,8 @@
         <h4 id="timeLeft"></h4>
         <h3 id="question"></h3>
         <div id="answers"></div>
-            <button id="submit" type="button" class="btn btn-success btn-lg" onclick="submit()">Submit answer</button>
+
+            <div id="button"></div><!--<button id="submit" type="button" class="btn btn-success btn-lg" onclick="submit()">Submit answer</button>-->
         </div>
         <div class="col-sm-6">
         <p id="picture"></p>

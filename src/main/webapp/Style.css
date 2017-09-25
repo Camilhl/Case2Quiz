@@ -96,10 +96,7 @@ body {
     background-color: #ff9666;
 }
 
-#midlogo{
-    padding: 20px;
-    margin-left: 430px;
-}
+
 
 #picture{
     float: right;
@@ -114,3 +111,14 @@ body {
     border: 1px solid #ffb492;
     background-color: #ffeee6;
 }
+
+#cont3 {
+    border: 1px solid #ffb492;
+    background-color: #ffeee6;
+}
+
+#picCont{
+    text-align: center;
+
+}
+

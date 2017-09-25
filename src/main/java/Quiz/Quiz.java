@@ -16,6 +16,7 @@ public class Quiz {
     private String name;
     private Date startTime;
     private ArrayList<Nick> players = new ArrayList<>();
+    private int totalTime = 0;
 
 
 
@@ -33,12 +34,20 @@ public class Quiz {
         this.startTime=starttime;
     }
 
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
     public Date getStartTime() {
         return startTime;
     }
 
     public String getName() {
         return name;
+    }
+
+    public int getTotalTime() {
+        return totalTime;
     }
 
     public void setStartTime(String startTime) {
@@ -60,6 +69,7 @@ public class Quiz {
     public boolean addQuestion(Question q){
         if(q != null) {
             questions.add(q);
+            this.totalTime += q.getTimeLimit();
             return true;
         }
         else {
@@ -153,7 +163,7 @@ public class Quiz {
         System.out.println(q.getQuestions().get(0).getTimeLimit());
         System.out.println(q.getQuestions().get(0).getRightAnswerIndex());*/
 
-        Nick nick1 = new Nick("Camilla", 10);
+       /* Nick nick1 = new Nick("Camilla", 10);
         Nick nick2 = new Nick("Nora", 5);
         Nick nick3 = new Nick("Kimia", 7);
         Nick nick4 = new Nick("line", 3);
@@ -176,7 +186,7 @@ public class Quiz {
         q.getPlayers().get(3).addPoint();
         q.getPlayers().get(3).addPoint();
         q.innsettingssort();
-        System.out.println(q.toString());
+        System.out.println(q.toString());*/
 
     }
 }
