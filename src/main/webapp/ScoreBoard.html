@@ -16,6 +16,8 @@
 
         var quizName;
 
+        var numberOfPlayers;
+
         $(document).ready(function() {
 
             //using the function getParameterByName to set the variables quizName and nickname
@@ -30,19 +32,31 @@
 
             $.get("rest/quizzes/" + quizName + "/players", function (data) {
 
+                numberOfPlayers = data.length;
+
                 if(data != null) {
                     for (i = 0; i < data.length; i++) {
                         if(data[i] != null) {
-                            $("#cont4").append('<div class="row">'
-                                + '<div name="quizzes" class="col-sm-4" style="background-color:#ffdccc;">' + placing + '</div>'
-                                + '<div class="col-sm-4" style="background-color:#ffcbb3;">' + data[i].nickname + '</div>'
-                                + '<div class="col-sm-4" style="background-color:#ffdccc;">' + data[i].score + '</div></div>');
+                            $("#cont4").append('<div class="row" id="row">'
+                                + '<div id="placing" name="quizzes" class="col-sm-4" style="background-color:#ffdccc;">' + placing + '</div>'
+                                + '<div id="placing" class="col-sm-4" style="background-color:#ffcbb3;">' + data[i].nickname + '</div>'
+                                + '<div if="score" class="col-sm-4" style="background-color:#ffdccc;">' + data[i].score + '</div></div>');
                         placing += 1;
                         }
                     }
                 }
 
             });
+        }
+
+        var interval = setInterval(updateLivePanel, 5000)
+
+        function updateLivePanel(){
+            for(i= 0; i < numberOfPlayers; i++) {
+                $("#row").remove();
+            }
+
+            showScoreboard()
         }
 
         /**

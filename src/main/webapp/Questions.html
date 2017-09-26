@@ -71,7 +71,7 @@
             if(countdown >= 0) {
                 document.getElementById("timer").innerHTML = "Time left this question: " + countdown;
 
-                if(countdown <= 10){ //changes color to red when it is 10 secounds left of the question
+                if(countdown <= 10){ //changes color to red when it is 10 seconds left of the question
                     document.getElementById("timer").style.color="red";
                 }
                 if(countdown > 10){
@@ -92,7 +92,7 @@
             var currentTime = new Date();
 
             if(currentTime < newDate){ //the quiz has not yet started
-                document.getElementById("question").innerHTML = "Secounds until start: " + Math.round((newDate-currentTime)/1000) + ""; //counts down secounds until start
+                document.getElementById("question").innerHTML = "Seconds until start: " + Math.round((newDate-currentTime)/1000) + ""; //counts down seconds until start
             }
             else{ //currentTime == newDate and the quiz should start
                 clearInterval(interval2); //stops the interval of thid function
@@ -100,7 +100,7 @@
                 document.getElementById("question").innerHTML = "";
 
                 countdown = 10; //sets countdown to 10 just so the countdownFunction can run until the actual countdown-value in loadQuestion() is set..
-                interval = setInterval(countdownFunction, 1000); //starts the interval of 1 secound to the countdownFunction
+                interval = setInterval(countdownFunction, 1000); //starts the interval of 1 second to the countdownFunction
                 loadQuestion();
             }
 
