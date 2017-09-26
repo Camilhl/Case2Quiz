@@ -185,7 +185,7 @@
 
                 }
 
-                if (round != questions.length) { //we are not done with the quiz
+                if (round < questions.length) { //we are not done with the quiz
 
                     countdown = questions[round].timeLimit; //sets the countdown variable to the timelimit of the question
 
@@ -203,7 +203,7 @@
                         $("#answers").append('<p id="answerText"><input type="radio" name="answer" id="answeroptions" onclick="selectAnswer(' + i + ')">' + questions[round].answers[i] + '</p><br id="space">');
                     }
 
-                } else{ //the quiz is over (the last question has been on the screen)
+                } else { //the quiz is over (the last question has been on the screen)
                     clearInterval(interval);
                     $("#quizStarts").remove();
                     $("#submit").remove();
