@@ -23,6 +23,8 @@
             //using the function getParameterByName to set the variables quizName and nickname
             quizName = getParameterByName('quizName');
 
+            document.getElementById("mainWindowHeadline2").innerHTML = "quizname: " + quizName + "";
+
             showScoreboard();
 
         });
@@ -92,7 +94,9 @@
 <br>
 
 <div class="container" id="cont4">
-    <h2 id="mainWindowHeadline2">Scoreboard</h2>
+    <h1>Scoreboard</h1>
+    <h2 id="mainWindowHeadline2"></h2>
+    <br>
     <ul id="futureQuizzes" style="list-style-type:disc">
     </ul>
     <div class="row">

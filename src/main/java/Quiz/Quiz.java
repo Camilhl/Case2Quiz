@@ -17,6 +17,7 @@ public class Quiz {
     private Date startTime;
     private ArrayList<Nick> players = new ArrayList<>();
     private int totalTime = 0;
+    private String[] ages = new String[5];
 
 
 
@@ -32,6 +33,20 @@ public class Quiz {
     public Quiz(String name, Date starttime){
         this.name= name;
         this.startTime=starttime;
+    }
+
+    public String[] getAges() {
+        return ages;
+    }
+
+    public void setAges(String[] ages) {
+        if(ages.length == 5){
+            this.ages = new String[1];
+            this.ages[0] = "All ages!";
+        }
+        else{
+            this.ages = ages;
+        }
     }
 
     public void setStartTime(Date startTime) {

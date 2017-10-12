@@ -57,7 +57,7 @@
     padding: 20px;
 }
 
-h2 {
+h2, h1 {
     color: darkolivegreen;
     text-align: center;
 
@@ -74,4 +74,9 @@ h2 {
 
 #picCont{
     text-align: center;
+}
+
+.answerButtons {
+    width: 100%;
+    height: 100px;
 }

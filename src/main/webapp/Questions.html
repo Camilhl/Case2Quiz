@@ -53,12 +53,12 @@
                         }
                     }
 
-                    $("#quizName").append('' + quizName + ''); //sets the headline "quiz name"
+                    $("#quizName").append(' ' + quizName + ''); //sets the headline "quiz name"
 
                     newDate = new Date(quizzes[quizIndex].startTime); //creates the date when the quiz starts
                     var outputDate = newDate.getDate() + "/" + (newDate.getMonth() + 1) + "/" + newDate.getFullYear() + ", at " + newDate.getHours() + ":" + newDate.getMinutes();
 
-                    $("#quizStarts").append('' + outputDate + ''); //sets the headline "quiz name"
+                    $("#quizStarts").append(' ' + outputDate + ''); //sets the headline "quiz name"
                 }
             });
         });
@@ -96,7 +96,7 @@
             }
             else{ //currentTime == newDate and the quiz should start
                 clearInterval(interval2); //stops the interval of thid function
-                $("#button").append('<button id="submit" type="button" class="btn btn-success btn-lg" onclick="submit()">Submit answer</button>');
+               // $("#button").append('<button id="submit" type="button" class="btn btn-success btn-lg" onclick="submit()">Submit answer</button>');
                 document.getElementById("question").innerHTML = "";
 
                 countdown = 10; //sets countdown to 10 just so the countdownFunction can run until the actual countdown-value in loadQuestion() is set..
@@ -120,7 +120,8 @@
          * Running everytime an answer is submitted and when the time for a question runs out.
          * Checks if the answer is correct, if so a point is added to the player/nick.
          */
-        function submit() {
+        function submit(answer) {
+            answerChosen = answer;
             if (answerChosen != null) {
                 if (answerChosen == correctAnswer) { //the answer was correct
                     $.ajax({ //Using PUT to add e point to the player
@@ -169,14 +170,14 @@
                 if (round > 0) {
                     $("#timer").remove();
                     $("#quest").remove();
-                    $("#answeroptions").remove();
-                    $("#answeroptions").remove();
-                    $("#answeroptions").remove();
-                    $("#answeroptions").remove();
+                    $("#svar1").remove();
+                    $("#svar2").remove();
+                    $("#svar3").remove();
+                    $("#svar4").remove();
+                   /* $("#answerText").remove();
                     $("#answerText").remove();
                     $("#answerText").remove();
-                    $("#answerText").remove();
-                    $("#answerText").remove();
+                    $("#answerText").remove();*/
                     $("#space").remove();
                     $("#space").remove();
                     $("#space").remove();
@@ -194,14 +195,38 @@
                     $("#question").append('<p id="quest">Question: ' + questions[round].question + '</p>');
 
                     if(questions[round].url != null){ //adds the picture if url in the question is not null
-                        $("#picture").append('<img id="questpic" class="col-sm-6" src="' + questions[round].url + '" alt="Error in loading picture.." width="100%" height="100%">'); //sets the first question')
+                        $("#picture").append('<img id="questpic" class="col-sm-6" src="' + questions[round].url + '" alt="Error in loading picture..">'); //sets the first question')
                     }
 
                     correctAnswer = questions[round].rightAnswerIndex;
 
-                    for (i = 0; i < 4; i++) { //adds all the answer-alternatives
-                        $("#answers").append('<p id="answerText"><input type="radio" name="answer" id="answeroptions" onclick="selectAnswer(' + i + ')">' + questions[round].answers[i] + '</p><br id="space">');
-                    }
+
+                    $("#answers").append(`
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <input type="button" class="answerButtons btn btn-success" id="svar1" value="${questions[round].answers[0]}" onclick="submit(0)">
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="button" class="answerButtons btn btn-info" id="svar2" value="${questions[round].answers[1]}" onclick="submit(1)">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <input type="button" class="answerButtons btn btn-warning" id="svar3" value="${questions[round].answers[2]}" onclick="submit(2)">
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="button" class="answerButtons btn btn-danger" id="svar4" value="${questions[round].answers[3]}" onclick="submit(3)">
+                        </div>
+                    </div>`);
+
+
+                    //for (i = 0; i < 4; i++) { //adds all the answer-alternatives
+
+                        //$("#answers").append('<input type="button" class="answerButton btn btn-success" id="answeroptions" onclick="submit(' + i + ')" value="' + questions[round].answers[i] + '">');
+
+                          //  '<p id="answerText"><input type="radio" name="answer" id="answeroptions" onclick="selectAnswer(' + i + ')">' + questions[round].answers[i] + '</p><br id="space">');
+                    //}
 
                 } else { //the quiz is over (the last question has been on the screen)
                     clearInterval(interval);
@@ -266,8 +291,8 @@
 </ul>
 <a></a>
 <div class="container">
-<h2 id="quizName">Quiz: </h2>
-<h2 id="quizStarts">Quiz start(ed) at: </h2>
+<h2 id="quizName">You have joined: </h2>
+<h2 id="quizStarts">Quiz starting: </h2>
     <h2 id="timeuntilStart"></h2>
 </div>
 <div class="container" id="qBox">
@@ -275,14 +300,14 @@
         <div class="col-sm-12">
             <h4 id="finish"></h4>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-8">
         <h4 id="timeLeft"></h4>
         <h3 id="question"></h3>
         <div id="answers"></div>
 
-            <div id="button"></div><!--<button id="submit" type="button" class="btn btn-success btn-lg" onclick="submit()">Submit answer</button>-->
+           <!--<button id="submit" type="button" class="btn btn-success btn-lg" onclick="submit()">Submit answer</button>-->
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-4">
         <p id="picture"></p>
         </div>
     </div>

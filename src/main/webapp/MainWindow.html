@@ -93,8 +93,11 @@
          * Loads all the quizzes and places it in the correct table (future quizzes, ongoing quizzes, ended quizzes) by comparing currentDate and startDate(newDate).
          */
         function loadData() {
+            $("#cont2").append('<div class="row"> <div name="noquiz" id="noquiz" class="col-sm-12" style="background-color:#ffeee6;">No quizzes avaliable at the moment.. <a href="regNewQuiz.html">Create a new one!</a></div></div>');
+
             $.get("rest/quizzes/", function (data) {
                 if (data != null) {
+                    $("#noquiz").hide()
 
                     var quizName;
                     var quizTime;
@@ -106,6 +109,10 @@
 
                     for(i=0; i<data.length; i++) {
 
+                        /*for(i=0; i< data.ages.length; i++){
+                            ages += ", " + data.ages.length[i] + "";
+                        }*/
+
                         quizName = data[i].name;
                         quizTime = data[i].startTime;
 
@@ -115,9 +122,14 @@
                         endDate.setSeconds(endDate.getSeconds() + data[i].totalTime);
 
                         if(newDate > currentTime){ //future quiz
+                            console.log(data[i].questions.length);
                             outputDate = newDate.getDate() + "/" + (newDate.getMonth() + 1) + "/" + newDate.getFullYear() + ", at " + newDate.getHours() + ":" + newDate.getMinutes();
-                            $("#cont2").append('<div class="row"> <div name="quizzes" id="' + i + '" class="col-sm-4" style="background-color:#ffdccc;">' + quizName + '</div><div class="col-sm-4" style="background-color:#ffcbb3;">' + outputDate + '</div><div class="col-sm-4" style="background-color:#ffdccc;"><a id="joinButton" onclick="insertNick(' + i + ')">Join</a></div></div>');
-
+                            $("#cont2").append('<div class="row"> <div name="quizzes" id="' + i + '" class="col-sm-2" style="background-color:#ffcbb3;">' + quizName + '</div>' +
+                                '<div class="col-sm-2" style="background-color:#ffdccc;">' + data[i].questions.length + ' </div>' +
+                                '<div name="appropriate" title="Appropriate for: ' + data[i].ages + ' " id="' + i + '" class="col-sm-2" style="background-color:#ffcbb3;">' + data[i].ages + '</div>' +
+                                '<div class="col-sm-2" style="background-color:#ffdccc;">' + outputDate + '</div>' +
+                                '<div class="col-sm-2" style="background-color:#ffcbb3;">' + data[i].players.length + ' </div>' +
+                                '<div class="col-sm-2" style="background-color:#ffdccc;"><a id="joinButton" onclick="insertNick(' + i + ')">Join</a></div></div>');
                         }else{
                             if (endDate < currentTime) { //quiz is over
                                 outputEnd = endDate.getDate() + "/" + (endDate.getMonth() + 1) + "/" + endDate.getFullYear() + ", at " + endDate.getHours() + ":" + endDate.getMinutes();
@@ -131,7 +143,8 @@
                     }
 
                 }
-
+                else{
+                }
             });
         }
     </script>
@@ -153,9 +166,12 @@
     <ul id="futureQuizzes" style="list-style-type:disc">
     </ul>
     <div class="row">
-        <div name="quizzes" class="col-sm-4" style="background-color:#ffdccc;"><dt>Quiz names</dt></div>
-        <div class="col-sm-4" style="background-color:#ffcbb3;"><dt>Starting time</dt></div>
-        <div class="col-sm-4" style="background-color:#ffdccc;"><dt>Join the quiz!</dt></div>
+        <div name="quizzes" class="col-sm-2" style="background-color:#ffcbb3;"><dt>Quiz names</dt></div>
+        <div class="col-sm-2" style="background-color:#ffdccc;"><dt>Questions</dt></div>
+        <div name="quizzes" class="col-sm-2" style="background-color:#ffcbb3;"><dt>Appropriate for:</dt></div>
+        <div class="col-sm-2" style="background-color:#ffdccc;"><dt>Starting time</dt></div>
+        <div class="col-sm-2" style="background-color:#ffcbb3;"><dt>Players</dt></div>
+        <div class="col-sm-2" style="background-color:#ffdccc;"><dt>Join the quiz!</dt></div>
     </div>
 </div>
 <br>

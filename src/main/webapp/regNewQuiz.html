@@ -42,21 +42,21 @@
                 numOfQuestions += 1;
 
                 //Using numOfQuestions to part each questions-ID from eachother
-                $("p").append('<div class="container" id="qBox">' +
-                    '<h2 id="questionheader">Question ' + numOfQuestions + '</h2>' +
+                $("#newQField").append('<div class="container" id="qBox">' +
+                    '<h2 id="questionheader">Question ' + (numOfQuestions + 1) + '</h2>' +
                     '<label>Question:</label>' +
                     '<input name=0 id="q' + numOfQuestions + '" type="text" class="form-control">' +
-                    '<label>Picture url:</label>' +
+                    '<label>Picture url (optional):</label>' +
                     '<input name=0 id="p' + numOfQuestions + '" type="text" class="form-control">' +
-                    '<label>Time-limit (secounds):</label>' +
+                    '<label>Time-limit (seconds):</label>' +
                     '<input name=0 id="t' + numOfQuestions + '" type="number" class="form-control">' +
                     '<label>Answer-alternatives : (use checkbox to set the right answer)</label>' +
                     '<br>' +
                     '<div class="radio">' +
-                    '<label><input type="radio" name="selectanswer' + numOfQuestions + '" onfocus="selectAnswer(' + numOfQuestions +', 0)"><input class="form-control" id="a1' + numOfQuestions + '" type="text"></label>' +
+                    '<label><input type="radio" checked name="selectanswer' + numOfQuestions + '" onfocus="selectAnswer(' + numOfQuestions +', 0)"><input class="form-control" id="a1' + numOfQuestions + '" type="text" placeholder="Required"></label>' +
                     '</div>' +
                     '<div class="radio">' +
-                    '<label><input type="radio" name="selectanswer' + numOfQuestions + '" onfocus="selectAnswer(' + numOfQuestions + ', 1)"><input class="form-control" id="a2' + numOfQuestions + '" type="text"></label>' +
+                    '<label><input type="radio" name="selectanswer' + numOfQuestions + '" onfocus="selectAnswer(' + numOfQuestions + ', 1)"><input class="form-control" id="a2' + numOfQuestions + '" type="text" placeholder="Required"></label>' +
                     '</div>' +
                     '<div class="radio">' +
                     '<label><input type="radio" name="selectanswer' + numOfQuestions + '" onfocus="selectAnswer(' + numOfQuestions +', 2)"><input class="form-control" id="a3' + numOfQuestions + '" type="text"></label>' +
@@ -72,17 +72,38 @@
              * Tries to store the quiz and the questions to the rest-server.
              */
             $("#submit").click(function () {
+                var ages = [];
+
+                if($("#elders").is(":checked")){
+                    ages.push("Elders");
+                }
+                if($("#middleage").is(":checked")){
+                    ages.push("Middle age");
+                }
+                if($("#teens").is(":checked")){
+                    ages.push("Teens");
+                }
+                if($("#children").is(":checked")){
+                    ages.push("Children");
+                }
+                if($("#toddlers").is(":checked")){
+                    ages.push("Todlers");
+                }
+
                 if($("#quizName").val() == ""){
                     alert("WARNING:\nYou have to chose a NAME for your quiz!");
-                } else if($("#time").val() == ""){
+                } else if($("#time").val() == "") {
                     alert("WARNING:\nYou have to chose a STARTING TIME for your quiz!");
+                } else if(ages.length == 0){
+                    alert("You have to choose the age-group for the quiz!");
                 }else{
                     $.ajax({
                         url: 'rest/quizzes',
                         type: 'POST',
                         data: JSON.stringify({
                             "name": $("#quizName").val(),
-                            "startTime": $("#time").val()
+                            "ages": ages,
+                            "startTime": $("#time").val(),
                         }),
 
                         contentType: 'application/json; charset=utf-8', //''application/json; charset=utf-8',
@@ -90,7 +111,7 @@
 
 
                         success: function (result) {
-                            alert("QUIZNAME added successfully")
+                            //alert("QUIZNAME added successfully")
                             addQuestions(); //adds the questions AFTER success of adding the quiz
                         },
                     });
@@ -115,31 +136,37 @@
                 var a3 = "#a3" + i + "";
                 var a4 = "#a4" + i + "";
 
-                $.ajax({
-                    url: 'rest/quizzes/' + $("#quizName").val() + '/questions',
-                    type: 'POST',
-                    data: JSON.stringify({
-                        "question": $(q).val(),
-                        "timeLimit": $(t).val(),
-                        "answers": [$(a1).val(), $(a2).val(), $(a3).val(), $(a4).val()],
-                        "rightAnswerIndex": correctAnswer[i],
-                        "url": $(p).val(),
-                    }),
-                    contentType: 'application/json; charset=utf-8',
-                    dataType: 'json',
+                if(($(a1).val() == "" || $(a2).val() == "")){
+                    alert("You have to add two answer alternatives!")
+                    i = numOfQuestions + 1;
+                }
+                else {
+                    $.ajax({
+                        url: 'rest/quizzes/' + $("#quizName").val() + '/questions',
+                        type: 'POST',
+                        data: JSON.stringify({
+                            "question": $(q).val(),
+                            "timeLimit": $(t).val(),
+                            "answers": [$(a1).val(), $(a2).val(), $(a3).val(), $(a4).val()],
+                            "rightAnswerIndex": correctAnswer[i],
+                            "url": $(p).val(),
+                        }),
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
 
-                    success: function (result) {
-                        alert("QUESTION added successfully");
-                    },
-
-                    statusCode: {
-                        500: function () {
-                            //alert("WARNING: Questions were not added successfully.\nPlease click ''Submit'' one more time!");
-
-                            document.getElementById("warning").innerHTML = "Questions were not added successfully.\nPlease click ''Submit'' one more time!";
+                        success: function (result) {
+                            //alert("QUESTION added successfully");
                         },
-                    }
-                });
+
+                        statusCode: {
+                            500: function () {
+                                //alert("WARNING: Questions were not added successfully.\nPlease click ''Submit'' one more time!");
+
+                                document.getElementById("warning").innerHTML = "Questions were not added successfully.\nPlease click ''Submit'' one more time!";
+                            },
+                        }
+                    });
+                }
 
                 if(i == numOfQuestions){
                     window.location.href = 'MainWindow.html'; //sends you to the MainWindow once the quiz was added successfully
@@ -161,10 +188,23 @@
     <h1>Register new quiz</h1>
     <label>Quiz-name:</label>
     <input id="quizName" type="text" class="form-control">
+    <br>
 
     <label>Quiz starts at:</label>
+    <p>(It is impossible to join the quiz after it has started)</p>
 
     <input id="time" type="datetime-local" class="form-control">
+    <br>
+
+    <label>Appropriate for:</label> <br>
+        <p><input type="checkbox" id="elders">Elders</p>
+        <p><input type="checkbox" id="middleage">Middle age</p>
+        <p><input type="checkbox" id="teens">Teens</p>
+        <p><input type="checkbox" id="children">Children</p>
+        <p><input type="checkbox" id="toddlers">Toddlers</p>
+
+
+
 
 </div>
     <br>
@@ -173,19 +213,27 @@
         <label>Question:</label>
         <input name=0 id="q0" type="text" class="form-control">
 
-        <label>Picture url:</label>
+        <label>Picture url (optional):</label>
         <input name=0 id="p0" type="text" class="form-control">
 
-        <label>Time-limit (secounds):</label>
-        <input name=0 id="t0" type="number" class="form-control">
+        <label>Time-limit (seconds):</label>
+        <select name=0 id="t0" class="form-control">
+            <option value="10">10 sec</option>
+            <option value="20">20 sec</option>
+            <option value="30">30 sec</option>
+            <option value="40">40 sec</option>
+            <option value="50">50 sec</option>
+            <option value="60">60 sec</option>
+        </select>
+
 
         <label>Answer-alternatives : (use checkbox to set the right answer)</label>
         <br>
         <div class="radio">
-            <label><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '0')"><input class="form-control" id="a10" type="text"></label>
+            <label><input type="radio" checked name="selectanswer0" onfocus="selectAnswer(0, '0')"><input class="form-control" id="a10" type="text" placeholder="Required"></label>
         </div>
         <div class="radio">
-            <label><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '1')" ><input class="form-control" id="a20" type="text"></label></label>
+            <label><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '1')" ><input class="form-control" id="a20" type="text" placeholder="Required"></label></label>
         </div>
         <div class="radio">
             <label><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '2')"><input class="form-control" id="a30" type="text"></label></label>
@@ -197,7 +245,7 @@
 
     </div>
 <br>
-<p></p>
+<p id="newQField"></p>
 <div class="container">
     <button id="newQ" type="button" class="btn btn-info btn-lg">+Add a new question</button>
     <button id="submit" type="button" class="btn btn-success btn-lg">Submit quiz</button>
