@@ -49,7 +49,14 @@
                     '<label>Picture url (optional):</label>' +
                     '<input name=0 id="p' + numOfQuestions + '" type="text" class="form-control">' +
                     '<label>Time-limit (seconds):</label>' +
-                    '<input name=0 id="t' + numOfQuestions + '" type="number" class="form-control">' +
+                    '<select name=0 id="t' + numOfQuestions + '" class="form-control">' +
+                            '<option value="10">10 sec</option>' +
+                        '<option value="20">20 sec</option>' +
+                        '<option value="30">30 sec</option>' +
+                        '<option value="40">40 sec</option>' +
+                        '<option value="50">50 sec</option>' +
+                        '<option value="60">60 sec</option>' +
+                        '</select>' +
                     '<label>Answer-alternatives : (use checkbox to set the right answer)</label>' +
                     '<br>' +
                     '<div class="radio">' +
