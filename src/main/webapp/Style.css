@@ -1,3 +1,6 @@
+body{
+    color: black;
+}
 
 
 #newA, #newQ {
@@ -64,10 +67,15 @@
 }
 
 h2, h1, #infoText {
-    text-align: center;
+    text-align: left;
+    color: black;
 
 }
 a {
+    color: black;
+}
+
+p {
     color: black;
 }
 
@@ -104,9 +112,6 @@ a {
 }
 
 
-
-
-
 #sidebarOption {
     background-color: #ffeee6;
     color: black;
@@ -123,3 +128,4 @@ a {
 #submitBox {
     text-align: center;
 }
+

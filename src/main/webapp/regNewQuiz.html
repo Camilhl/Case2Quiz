@@ -177,6 +177,7 @@
         }
 
         function openTable(quiz, number) { //0 = info, 1 = question, 2 = newQuestion
+            $("#submitBox").hide();
 
             if (numOfQuestions > 0) {
                 var quizShown = $("#questionheader").val();
@@ -206,11 +207,10 @@
                 $("#questionheader").val(numOfQuestions);
 
 
-                $("#sidebarOption").append('<li id="newQ' + numOfQuestions + '">' +
+                $("#quizInfoField").append('<li class="">' +
                     '<a name="cross" href="#tab" onclick="deleteQ(' + numOfQuestions + ')">&#10060;</a>' +
-                    '<a name="question' + numOfQuestions + '" class="tablink" onclick="openTable(1,' + "" + numOfQuestions + ')" href="#tab2" data-toggle="tab"> Question ' + (numOfQuestions) + '</a>' +
-                    '</li>'
-                );
+                    '<a  class="tablink" onclick="openTable(1,' + "" + numOfQuestions + ')" data-toggle="tab">Question ' + numOfQuestions + '</a>' +
+                    '</li>');
 
             } else if(quiz == 1) {
 
@@ -263,7 +263,9 @@
         }
 
         function preSubmit(){
-            openTable(0, -1);
+
+            $("#defaultOpen").trigger("click"); //hvorfor blir ikke denne knappen i fokus??
+            //openTable(0, -1);
             $("#submitBox").show();
         }
 
@@ -273,44 +275,36 @@
 <body>
 
 <ul id="topMenu">
-    <li id="topMenuOptions"><img id="toplogo" src="https://image.ibb.co/mM8dUQ/Les_Quizerables.jpg" alt="Logo" height="100" width="200"></li>
-    <li id="topMenuOptions"><a href="Frontpage.html">Home</a></li>
+    <li id="topMenuOptions"><img alt="logo" id="toplogo" onclick="clickLogo()" src="https://image.ibb.co/mM8dUQ/Les_Quizerables.jpg" height="100" width="188"></li>
     <li id="topMenuOptions"><a href="MainWindow.html">Start quizzing!</a></li>
-    <li id="topMenuOptions"><a href="regNewQuiz.html">Create new quiz</a></li>
+    <li id="topMenuOptions" class="active"><a href="regNewQuiz.html">Create new quiz</a></li>
 </ul>
 
-<div class = "row">
-    <div id="sidebar" class="col-sm-2">
+
+<div class="row">
+    <div class="col-sm-2">
         <nav class="nav-sidebar">
             <ul class="nav tabs">
-                <li id="sidebarOption"><a class="tablink" onclick="openTable(0, -1)" href="#tab1" data-toggle="tab">Quiz info</a></li>
-                <li id="newQ" class=""><a class="tablink" onclick="openTable(2, -1)" href="#tab2" data-toggle="tab">+ Add question</a></li>
-                <!--<li id="sidebarOption" class=""><a href="#tab3" data-toggle="tab">Submit quiz</a></li>-->
+                <li class="active"><a  id="defaultOpen" class="tablink" onclick="openTable(0, -1)" data-toggle="tab">Quiz info</a></li>
+                <div id="quizInfoField"></div>
+                <li class=""><a  class="tablink" onclick="openTable(2, -1)" data-toggle="tab">+ Add question</a></li>
+                <li class=""><a  class="tablink" onclick="preSubmit()" data-toggle="tab">Submit quiz</a></li>
             </ul>
         </nav>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <li id="presubmit" onclick="preSubmit()"><a href="#submit" data-toggle="tab">Submit quiz</a></li>
     </div>
 
     <div class="col-sm-9">
-<!--<div class="container">-->
+<!--<div class="container">--><br>
     <div class="cards" id="QuizInfo">
-        <h1>Register new quiz</h1>
+        <br>
+        <h2>Register new quiz</h2>
+
         <label>Quiz-name:</label>
         <input id="quizName" type="text" class="form-control">
         <br>
 
         <label>Quiz starts at:</label>
-        <p>(It is impossible to join the quiz after it has started)</p>
+        <p id="infoText">(It is impossible to join the quiz after it has started)</p>
 
         <input id="time" type="datetime-local" class="form-control">
         <br>
