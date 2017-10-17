@@ -115,15 +115,23 @@
 
                         quizName = data[i].name;
                         quizTime = data[i].startTime;
+                        newDate = quizTime;
+                        var newwwwdate = new Date(newDate);
 
-                        newDate = new Date(quizTime);
 
-                        endDate = new Date(quizTime);
+                        console.log("hei");
+                        //newDate = new Date(quizTime);
+
+
+                        endDate = new Date(newDate);
                         endDate.setSeconds(endDate.getSeconds() + data[i].totalTime);
+
+
+
 
                         if(newDate > currentTime){ //future quiz
                             console.log(data[i].questions.length);
-                            outputDate = newDate.getDate() + "/" + (newDate.getMonth() + 1) + "/" + newDate.getFullYear() + ", at " + newDate.getHours() + ":" + newDate.getMinutes();
+                            outputDate = newwwwdate.getDate() + "/" + (newwwwdate.getMonth() + 1) + "/" + newwwwdate.getFullYear() + ", at " + newwwwdate.getHours() + ":" + newwwwdate.getMinutes();
                             $("#cont2").append('<div class="row"> <div name="quizzes" id="' + i + '" class="col-sm-2" style="background-color:#ffcbb3;">' + quizName + '</div>' +
                                 '<div class="col-sm-2" style="background-color:#ffdccc;">' + data[i].questions.length + ' </div>' +
                                 '<div name="appropriate" title="Appropriate for: ' + data[i].ages + ' " id="' + i + '" class="col-sm-2" style="background-color:#ffcbb3;">' + data[i].ages + '</div>' +
@@ -136,7 +144,7 @@
                                 $("#cont3").append('<div class="row"> <div name="quizzes" id="' + i + '" class="col-sm-4" style="background-color:#ffdccc;">' + quizName + '</div><div class="col-sm-4" style="background-color:#ffcbb3;">' + outputEnd + '</div><div class="col-sm-4" style="background-color:#ffdccc;"><a id="scoreboardButton" onclick="scoreBoard(' + i + ')">ScoreBoard</a></div></div>');
                             }
                             else if(endDate > currentTime){ //ongoing quizzes
-                                outputDate = newDate.getDate() + "/" + (newDate.getMonth() + 1) + "/" + newDate.getFullYear() + ", at " + newDate.getHours() + ":" + newDate.getMinutes();
+                                outputDate = newwwwdate.getDate() + "/" + (newwwwdate.getMonth() + 1) + "/" + newwwwdate.getFullYear() + ", at " + newwwwdate.getHours() + ":" + newwwwdate.getMinutes();
                                 $("#cont1").append('<div class="row"> <div name="quizzes" id="' + i + '" class="col-sm-4" style="background-color:#ffdccc;">' + quizName + '</div><div class="col-sm-4" style="background-color:#ffcbb3;">' + outputDate + '</div><div class="col-sm-4" style="background-color:#ffdccc;"><a id="scoreboardButton" onclick="scoreBoard(' + i + ')">ScoreBoard</a></div></div>');
                             }
                         }

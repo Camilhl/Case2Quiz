@@ -14,7 +14,7 @@ import java.util.Map;
 public class Quiz {
     private ArrayList<Question> questions = new ArrayList<>();
     private String name;
-    private Date startTime;
+    private String startTime;
     private ArrayList<Nick> players = new ArrayList<>();
     private int totalTime = 0;
     private String[] ages = new String[5];
@@ -30,7 +30,7 @@ public class Quiz {
 
     public Quiz(){}
 
-    public Quiz(String name, Date starttime){
+    public Quiz(String name, String starttime){
         this.name= name;
         this.startTime=starttime;
     }
@@ -49,13 +49,24 @@ public class Quiz {
         }
     }
 
-    public void setStartTime(Date startTime) {
+    public void setStartTime(String startTime) {
         this.startTime = startTime;
     }
 
     public Date getStartTime() {
-        return startTime;
+
+        Date today = new Date();
+        startTime = startTime.replace("T", " ");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date date = new Date();
+        try {
+            return format.parse(startTime);
+        }catch(Exception e){
+
+        }
+        return null;
     }
+
 
     public String getName() {
         return name;
@@ -65,7 +76,7 @@ public class Quiz {
         return totalTime;
     }
 
-    public void setStartTime(String startTime) {
+    /*public void setStartTime(String startTime) {
 
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm");
         try{
@@ -75,7 +86,7 @@ public class Quiz {
             System.out.println(e.toString() + "Ikke en dato!!!!!!");
         }
 
-    }
+    }*/
 
     public void setName(String name) {
         this.name = name;
