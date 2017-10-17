@@ -5,8 +5,10 @@
 }
 
 #qBox{
-    border: 1px solid #ffb492;
-    background-color: #ffeee6;
+    padding: 20px;
+    /*border: 1px solid #ffb492;
+
+    background-color: #ffeee6;*/
 }
 
 #topMenu {
@@ -88,3 +90,36 @@ a {
 }
 
 
+
+
+.nav-sidebar {
+    float: left;
+    width: 100%;
+    height: 100%;
+}
+
+#sidebar {
+    height: 470px;
+    background-color: #ffeee6;
+}
+
+
+
+
+
+#sidebarOption {
+    background-color: #ffeee6;
+    color: black;
+}
+
+.radio {
+    appearance: none;
+}
+
+.radio:checked {
+
+}
+
+#submitBox {
+    text-align: center;
+}

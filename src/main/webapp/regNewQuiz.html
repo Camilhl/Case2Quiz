@@ -21,6 +21,12 @@
 
         var numOfQuestions = 0; //the number of questions
 
+        var questions = []; //all the questions
+
+        var pictureURL = [];
+
+        var timelimit = [];
+
         /**
          * Runs everytime an answer-alternative is chosen as the right one and being stored in an array.
          * @param questionNumber
@@ -28,17 +34,26 @@
          */
         function selectAnswer(questionNumber, val){
 
-            correctAnswer[questionNumber] = val;
+            var qnum = $("#questionheader").val();
+
+            correctAnswer[qnum] = val;
         }
 
 
         $(document).ready(function() {
 
+            $("#submitBox").hide();
+            $("#Question").hide();
+
             /**
              * Runs everytime the "add new question"-button is clicked
              * Adds another question-input-field to the page.
              */
-            $("#newQ").click(function(){
+            $("#newQ").click(function() {
+
+
+            }); /*
+
                 numOfQuestions += 1;
 
                 //Using numOfQuestions to part each questions-ID from eachother
@@ -71,7 +86,7 @@
                     '<div class="radio">' +
                     '<label><input type="radio" name="selectanswer' + numOfQuestions + '" onfocus="selectAnswer(' + numOfQuestions +', 3)"><input class="form-control" id="a4' + numOfQuestions + '" type="text"></label>' +
                 '</div></div><br>');
-            });
+            });*/
 
 
             /**
@@ -79,37 +94,18 @@
              * Tries to store the quiz and the questions to the rest-server.
              */
             $("#submit").click(function () {
-                var ages = [];
-
-                if($("#elders").is(":checked")){
-                    ages.push("Elders");
-                }
-                if($("#middleage").is(":checked")){
-                    ages.push("Middle age");
-                }
-                if($("#teens").is(":checked")){
-                    ages.push("Teens");
-                }
-                if($("#children").is(":checked")){
-                    ages.push("Children");
-                }
-                if($("#toddlers").is(":checked")){
-                    ages.push("Todlers");
-                }
 
                 if($("#quizName").val() == ""){
                     alert("WARNING:\nYou have to chose a NAME for your quiz!");
                 } else if($("#time").val() == "") {
                     alert("WARNING:\nYou have to chose a STARTING TIME for your quiz!");
-                } else if(ages.length == 0){
-                    alert("You have to choose the age-group for the quiz!");
                 }else{
                     $.ajax({
                         url: 'rest/quizzes',
                         type: 'POST',
                         data: JSON.stringify({
                             "name": $("#quizName").val(),
-                            "ages": ages,
+                            "theme": $("#theme").val(),
                             "startTime": $("#time").val(),
                         }),
 
@@ -118,8 +114,8 @@
 
 
                         success: function (result) {
-                            //alert("QUIZNAME added successfully")
-                            addQuestions(); //adds the questions AFTER success of adding the quiz
+                            alert("QUIZINFO added successfully")
+                            pushQuestions(); //adds the questions AFTER success of adding the quiz
                         },
                     });
                 }
@@ -132,54 +128,146 @@
          * Runs when the Quiz is added successfully.
          * Tries to store Questions of the Quiz to the rest-server.
          */
-        function addQuestions(){
+        function pushQuestions() {
 
-            for (i = 0; i <= numOfQuestions; i++) {
-                var q = "#q" + i + "";
+            for (var i = 1; i <= numOfQuestions; i++) {
+                /*var q = "#q" + i + "";
                 var p = "#p" + i + "";
                 var t = "#t" + i + "";
                 var a1 = "#a1" + i + "";
                 var a2 = "#a2" + i + "";
                 var a3 = "#a3" + i + "";
-                var a4 = "#a4" + i + "";
-
-                if(($(a1).val() == "" || $(a2).val() == "")){
+                var a4 = "#a4" + i + "";*/
+                /*if(($(a1).val() == "" || $(a2).val() == "")){
                     alert("You have to add two answer alternatives!")
                     i = numOfQuestions + 1;
-                }
-                else {
-                    $.ajax({
-                        url: 'rest/quizzes/' + $("#quizName").val() + '/questions',
-                        type: 'POST',
-                        data: JSON.stringify({
-                            "question": $(q).val(),
-                            "timeLimit": $(t).val(),
-                            "answers": [$(a1).val(), $(a2).val(), $(a3).val(), $(a4).val()],
-                            "rightAnswerIndex": correctAnswer[i],
-                            "url": $(p).val(),
-                        }),
-                        contentType: 'application/json; charset=utf-8',
-                        dataType: 'json',
+                }*/
+                $.ajax({
+                    url: 'rest/quizzes/' + $("#quizName").val() + '/questions',
+                    type: 'POST',
+                    data: JSON.stringify({
+                        "question": questions[i],
+                        "timeLimit": timelimit[i],
+                        //"answers": [$(a1).val(), $(a2).val(), $(a3).val(), $(a4).val()],
+                        "rightAnswerIndex": correctAnswer[i],
+                        "url": pictureURL[i],
+                    }),
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
 
-                        success: function (result) {
-                            //alert("QUESTION added successfully");
+                    success: function (result) {
+                        alert("QUESTION added successfully");
+                    },
+
+                    statusCode: {
+                        500: function () {
+                            //alert("WARNING: Questions were not added successfully.\nPlease click ''Submit'' one more time!");
+
+                            document.getElementById("warning").innerHTML = "Questions were not added successfully.\nPlease click ''Submit'' one more time!";
                         },
+                    }
+                });
 
-                        statusCode: {
-                            500: function () {
-                                //alert("WARNING: Questions were not added successfully.\nPlease click ''Submit'' one more time!");
-
-                                document.getElementById("warning").innerHTML = "Questions were not added successfully.\nPlease click ''Submit'' one more time!";
-                            },
-                        }
-                    });
-                }
-
-                if(i == numOfQuestions){
+                if (i == numOfQuestions) {
                     window.location.href = 'MainWindow.html'; //sends you to the MainWindow once the quiz was added successfully
                 }
             }
+
+
         }
+
+        function openTable(quiz, number) { //0 = info, 1 = question, 2 = newQuestion
+
+            if (numOfQuestions > 0) {
+                var quizShown = $("#questionheader").val();
+                console.log("quiz shown:" + quizShown);
+                saveInfo(quizShown);
+            }
+
+            var i, cards, tablinks;
+            cards = document.getElementsByClassName("cards");
+            for (i = 0; i < cards.length; i++) {
+                cards[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablink");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].style.backgroundColor = "";
+            }
+
+            if(quiz == 0){
+                document.getElementById("QuizInfo").style.display = "block";
+            }
+
+            if(quiz == 2){
+                numOfQuestions += 1;
+
+                document.getElementById("Question").style.display = "block";
+                document.getElementById("questionheader").innerHTML = numOfQuestions;
+                $("#questionheader").val(numOfQuestions);
+
+
+                $("#sidebarOption").append('<li id="newQ' + numOfQuestions + '">' +
+                    '<a name="cross" href="#tab" onclick="deleteQ(' + numOfQuestions + ')">&#10060;</a>' +
+                    '<a name="question' + numOfQuestions + '" class="tablink" onclick="openTable(1,' + "" + numOfQuestions + ')" href="#tab2" data-toggle="tab"> Question ' + (numOfQuestions) + '</a>' +
+                    '</li>'
+                );
+
+            } else if(quiz == 1) {
+
+                document.getElementById("Question").style.display = "block";
+                document.getElementById("questionheader").innerHTML = number;
+                $("#questionheader").val(number);
+                console.log("new quiz: " + number);
+                fillQ(number);
+
+            }
+        }
+
+        function saveInfo(number) {
+            questions[number] = $("#q0").val();
+            pictureURL[number] = $("#p0").val();
+            timelimit[number] = $("#t0").val();
+
+            console.log(number + " " + questions[number] + " " + pictureURL[number] + " " + timelimit[number]);
+
+            $("#q0").val("");
+            $("#p0").val("");
+            $("#t0").val(10);
+
+        }
+
+        function fillQ(number){
+
+            $("#q0").val(questions[number]);
+            $("#p0").val(pictureURL[number]);
+            $("#t0").val(timelimit[number]);
+
+        }
+
+        function deleteQ(number){
+            var deletename = "newQ" + number + "";
+
+            document.getElementById(deletename).remove();
+            if(number == numOfQuestions) {
+                numOfQuestions -= 1;
+            }
+
+            questions[number] = "";
+            pictureURL[number] = "";
+            timelimit[number] = "";
+
+        }
+
+        function clickLogo() {
+            window.location.href = "Frontpage.html";
+        }
+
+        function preSubmit(){
+            openTable(0, -1);
+            $("#submitBox").show();
+        }
+
+
     </script>
 </head>
 <body>
@@ -191,31 +279,101 @@
     <li id="topMenuOptions"><a href="regNewQuiz.html">Create new quiz</a></li>
 </ul>
 
-<div class="container">
-    <h1>Register new quiz</h1>
-    <label>Quiz-name:</label>
-    <input id="quizName" type="text" class="form-control">
-    <br>
+<div class = "row">
+    <div id="sidebar" class="col-sm-2">
+        <nav class="nav-sidebar">
+            <ul class="nav tabs">
+                <li id="sidebarOption"><a class="tablink" onclick="openTable(0, -1)" href="#tab1" data-toggle="tab">Quiz info</a></li>
+                <li id="newQ" class=""><a class="tablink" onclick="openTable(2, -1)" href="#tab2" data-toggle="tab">+ Add question</a></li>
+                <!--<li id="sidebarOption" class=""><a href="#tab3" data-toggle="tab">Submit quiz</a></li>-->
+            </ul>
+        </nav>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <li id="presubmit" onclick="preSubmit()"><a href="#submit" data-toggle="tab">Submit quiz</a></li>
+    </div>
 
-    <label>Quiz starts at:</label>
-    <p>(It is impossible to join the quiz after it has started)</p>
+    <div class="col-sm-9">
+<!--<div class="container">-->
+    <div class="cards" id="QuizInfo">
+        <h1>Register new quiz</h1>
+        <label>Quiz-name:</label>
+        <input id="quizName" type="text" class="form-control">
+        <br>
 
-    <input id="time" type="datetime-local" class="form-control">
-    <br>
+        <label>Quiz starts at:</label>
+        <p>(It is impossible to join the quiz after it has started)</p>
 
-    <label>Appropriate for:</label> <br>
-        <p><input type="checkbox" id="elders">Elders</p>
-        <p><input type="checkbox" id="middleage">Middle age</p>
-        <p><input type="checkbox" id="teens">Teens</p>
-        <p><input type="checkbox" id="children">Children</p>
-        <p><input type="checkbox" id="toddlers">Toddlers</p>
+        <input id="time" type="datetime-local" class="form-control">
+        <br>
+            <div >
+                <label>Quiz theme:</label>
+                    <select name=0 id="theme" class="form-control">
+                        <option value="Godt og blandet">Godt og blandet</option>
+                        <option value="Sport">Sport</option>
+                        <option value="Musikk">Musikk</option>
+                        <option value="Geografi">Geografi</option>
+                        <option value="Språk">Språk</option>
+                        <option value="Allmen kunnskap">Almenn kunnskap</option>
+                    </select>
+            </div>
+    </div>
+
+
+    <div class="cards" id="Question">
+        <div >
+            <div id="qBox">
+                <h2>Question <a id="questionheader"></a></h2>
+                <label>Question:</label>
+                <input name=0 id="q0" type="text" class="form-control">
+                <br>
+                <label>Picture url (optional):</label>
+                <input name=0 id="p0" type="text" class="form-control">
+                <br>
+                <label>Time-limit (seconds):</label>
+                <select name=0 id="t0" class="form-control">
+                    <option value="10">10 sec</option>
+                    <option value="20">20 sec</option>
+                    <option value="30">30 sec</option>
+                    <option value="40">40 sec</option>
+                    <option value="50">50 sec</option>
+                    <option value="60">60 sec</option>
+                </select>
+                <br>
+
+                <label>Answer-alternatives : (use checkbox to set the right answer)</label>
+                <br>
+                <div class="radio">
+                    <label class="col-sm-6"><input type="radio" checked name="selectanswer0" onfocus="selectAnswer(0, '0')"><input class="form-control" id="a10" type="text" placeholder="Required"></label>
+                    <label class="col-sm-6"><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '1')" ><input class="form-control" id="a20" type="text" placeholder="Required"></label></label>
+                </div>
+                <br>
+                <br>
+                <div class="radio">
+                    <label class="col-sm-6"><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '2')"><input class="form-control" id="a30" type="text"></label></label>
+                    <label class="col-sm-6"><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '3')"><input class="form-control" id="a40" type="text"></label></label>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 
 
-</div>
-    <br>
-    <div class="container" id="qBox">
+
+
+
+<!--</div>-->
+   <!-- <br>
+    <div id="qBox">
         <h2 id="questionheader">Question 1</h2>
         <label>Question:</label>
         <input name=0 id="q0" type="text" class="form-control">
@@ -250,13 +408,21 @@
         </div>
 
 
+    </div>-->
+    <!--<p id="newQField"></p>
+
+        <button id="newQ" type="button" class="btn btn-info btn-lg">+Add a new question</button>
+        <button id="submit" type="button" class="btn btn-success btn-lg">Submit quiz</button>
+        <h4 id="warning" color="red"></h4>
+    </div>-->
+        <br>
+        <div id="submitBox">
+            <p>Please be sure to double check your info and all your questions before confirming.</p>
+        <button id="submit" type="button" class="btn btn-success btn-lg">Confirm submit quiz</button>
+        </div>
     </div>
-<br>
-<p id="newQField"></p>
-<div class="container">
-    <button id="newQ" type="button" class="btn btn-info btn-lg">+Add a new question</button>
-    <button id="submit" type="button" class="btn btn-success btn-lg">Submit quiz</button>
-    <h4 id="warning" color="red"></h4>
+
+    <div class="col-sm-1" id="">
 </div>
 </body>
 </html>

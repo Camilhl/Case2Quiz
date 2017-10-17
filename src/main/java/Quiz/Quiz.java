@@ -17,16 +17,9 @@ public class Quiz {
     private String startTime;
     private ArrayList<Nick> players = new ArrayList<>();
     private int totalTime = 0;
-    private String[] ages = new String[5];
+    private String theme;
+    //private String[] ages = new String[5];
 
-
-
-   /* public Quiz(String name, ArrayList<Question> q, String startTime) {
-        this.startTime = startTime;
-        for(int i = 0; i < q.size(); i++){
-            this.questions.add(q.get(i));
-        }
-    }*/
 
     public Quiz(){}
 
@@ -35,11 +28,17 @@ public class Quiz {
         this.startTime=starttime;
     }
 
-    public String[] getAges() {
-        return ages;
+    public String getTheme() {
+        return theme;
     }
 
-    public void setAges(String[] ages) {
+    public void setTheme(String theme) {
+        this.theme = theme;
+    }
+
+    //public String[] getAges() {return ages;}
+
+   /* public void setAges(String[] ages) {
         if(ages.length == 5){
             this.ages = new String[1];
             this.ages[0] = "All ages!";
@@ -47,7 +46,7 @@ public class Quiz {
         else{
             this.ages = ages;
         }
-    }
+    }*/
 
     public void setStartTime(String startTime) {
         this.startTime = startTime;
