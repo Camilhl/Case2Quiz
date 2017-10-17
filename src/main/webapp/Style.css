@@ -35,6 +35,10 @@
 #topMenuOptions a:hover {
     background-color: #ff9666;
 }
+.active {
+    background-color: #ff9666;
+    color: white;
+}
 
 #toplogo {
     padding: 16px
@@ -57,19 +61,16 @@
     padding: 20px;
 }
 
-h2, h1 {
-    color: darkolivegreen;
+h2, h1, #infoText {
     text-align: center;
 
+}
+a {
+    color: black;
 }
 
 #picture{
     float: right;
-}
-
-#cont2, #cont1, #cont3, #cont4 {
-    border: 1px solid #ffb492;
-    background-color: #ffeee6;
 }
 
 #picCont{
@@ -80,3 +81,10 @@ h2, h1 {
     width: 100%;
     height: 100px;
 }
+
+.quizzes {
+    display: none;
+    padding: 10px;
+}
+
+

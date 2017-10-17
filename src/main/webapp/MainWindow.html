@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <title>MainWindow</title>
     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
-    <link rel="stylesheet" type="text/css" href="Style.css">
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="http://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="Style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="jquery-3.2.1.min.js"></script>
@@ -16,6 +16,8 @@
 
         $(document).ready(function() {
             loadData();
+            // Get the element with id="defaultOpen" and click on it
+            document.getElementById("defaultOpen").click();
         });
 
         /**
@@ -107,11 +109,7 @@
                     var outputDate;
                     var currentTime = new Date();
 
-                    for(i=0; i<data.length; i++) {
-
-                        /*for(i=0; i< data.ages.length; i++){
-                            ages += ", " + data.ages.length[i] + "";
-                        }*/
+                    for(var i=0; i<data.length; i++) {
 
                         quizName = data[i].name;
                         quizTime = data[i].startTime;
@@ -119,7 +117,6 @@
                         var newwwwdate = new Date(newDate);
 
 
-                        console.log("hei");
                         //newDate = new Date(quizTime);
 
 
@@ -131,84 +128,158 @@
 
                         if(newDate > currentTime){ //future quiz
                             console.log(data[i].questions.length);
-                            outputDate = newwwwdate.getDate() + "/" + (newwwwdate.getMonth() + 1) + "/" + newwwwdate.getFullYear() + ", at " + newwwwdate.getHours() + ":" + newwwwdate.getMinutes();
-                            $("#cont2").append('<div class="row"> <div name="quizzes" id="' + i + '" class="col-sm-2" style="background-color:#ffcbb3;">' + quizName + '</div>' +
-                                '<div class="col-sm-2" style="background-color:#ffdccc;">' + data[i].questions.length + ' </div>' +
-                                '<div name="appropriate" title="Appropriate for: ' + data[i].ages + ' " id="' + i + '" class="col-sm-2" style="background-color:#ffcbb3;">' + data[i].ages + '</div>' +
-                                '<div class="col-sm-2" style="background-color:#ffdccc;">' + outputDate + '</div>' +
-                                '<div class="col-sm-2" style="background-color:#ffcbb3;">' + data[i].players.length + ' </div>' +
-                                '<div class="col-sm-2" style="background-color:#ffdccc;"><a id="joinButton" onclick="insertNick(' + i + ')">Join</a></div></div>');
-                        }else{
+                            outputDate = newwwwdate.getDate() + "/" + (newwwwdate.getMonth() + 1) + "/"
+                                + newwwwdate.getFullYear() + ", at " + newwwwdate.getHours() + ":" + newwwwdate.getMinutes();
+                            $("#addFutureQuizzes").append('<tr onclick="insertNick(' + i + ')"> <td>'+quizName+'</td>' +
+                                '<td>'+outputDate+'</td>' +
+                                '<td>Theme</td>' +
+                                '<td>'+data[i].questions.length+'</td>' +
+                                '<td>'+data[i].players.length+'</td> </tr>');
+                        } else {
                             if (endDate < currentTime) { //quiz is over
                                 outputEnd = endDate.getDate() + "/" + (endDate.getMonth() + 1) + "/" + endDate.getFullYear() + ", at " + endDate.getHours() + ":" + endDate.getMinutes();
-                                $("#cont3").append('<div class="row"> <div name="quizzes" id="' + i + '" class="col-sm-4" style="background-color:#ffdccc;">' + quizName + '</div><div class="col-sm-4" style="background-color:#ffcbb3;">' + outputEnd + '</div><div class="col-sm-4" style="background-color:#ffdccc;"><a id="scoreboardButton" onclick="scoreBoard(' + i + ')">ScoreBoard</a></div></div>');
-                            }
-                            else if(endDate > currentTime){ //ongoing quizzes
+                                $("#addEndedQuizzes").append('<tr><td>'+quizName+'</td>' +
+                                    '<td>'+outputEnd+'</td>' +
+                                    '<td><button type="button" class="btn btn-success" onclick="scoreBoard('+i+')">Scoreboard</button>' +
+                                    '</td></tr>');
+
+
+                                /*$("#cont3").append('<div class="row"> <div name="quizzes" id="' +
+                                    i + '" class="col-sm-4" style="background-color:#ffdccc;">' +
+                                    quizName + '</div><div class="col-sm-4" style="background-color:#ffcbb3;">'
+                                    + outputEnd + '</div><div class="col-sm-4" style="background-color:#ffdccc;">' +
+                                    '<a id="scoreboardButton" onclick="scoreBoard(' + i + ')">ScoreBoard</a>' +
+                                    '</div></div>');*/
+                            } else if(endDate > currentTime){ //ongoing quizzes
                                 outputDate = newwwwdate.getDate() + "/" + (newwwwdate.getMonth() + 1) + "/" + newwwwdate.getFullYear() + ", at " + newwwwdate.getHours() + ":" + newwwwdate.getMinutes();
-                                $("#cont1").append('<div class="row"> <div name="quizzes" id="' + i + '" class="col-sm-4" style="background-color:#ffdccc;">' + quizName + '</div><div class="col-sm-4" style="background-color:#ffcbb3;">' + outputDate + '</div><div class="col-sm-4" style="background-color:#ffdccc;"><a id="scoreboardButton" onclick="scoreBoard(' + i + ')">ScoreBoard</a></div></div>');
+                                $("#addOngoingQuizzes").append('<tr><td>'+quizName+'</td>' +
+                                    '<td>'+outputDate+'</td>' +
+                                    '<td><button type="button" class="btn btn-success" onclick="scoreBoard('+i+')">Scoreboard</button>' +
+                                    '</td></tr>')
+
+                                /*$("#cont1").append('<div class="row"> <div name="quizzes" id="' + i + '" class="col-sm-4" style="background-color:#ffdccc;">' + quizName + '</div><div class="col-sm-4" style="background-color:#ffcbb3;">' + outputDate + '
+                                </div><div class="col-sm-4" style="background-color:#ffdccc;"><a id="scoreboardButton"
+                                 onclick="scoreBoard(' + i + ')">ScoreBoard</a></div></div>');*/
+
                             }
                         }
                     }
 
                 }
-                else{
-                }
             });
         }
+        function openTable(quiz) {
+            var i, quizzes, tablinks;
+            quizzes = document.getElementsByClassName("quizzes");
+            for (i = 0; i < quizzes.length; i++) {
+                quizzes[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablink");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].style.backgroundColor = "";
+            }
+            document.getElementById(quiz).style.display = "block";
+        }
+        function clickLogo() {
+            window.location.href = "Frontpage.html";
+        }
+
     </script>
 
 </head>
 <body>
 <ul id="topMenu">
-    <li id="topMenuOptions"><img id="toplogo" src="https://image.ibb.co/mM8dUQ/Les_Quizerables.jpg" alt="Logo" height="100" width="200"></li>
-    <li id="topMenuOptions"><a href="Frontpage.html">Home</a></li>
-    <li id="topMenuOptions"><a href="MainWindow.html">Start quizzing!</a></li>
+    <li id="topMenuOptions"><img alt="logo" id="toplogo" onclick="clickLogo()" src="https://image.ibb.co/mM8dUQ/Les_Quizerables.jpg" height="100" width="200"></li>
+    <li id="topMenuOptions" class="active"><a href="MainWindow.html">Start quizzing!</a></li>
     <li id="topMenuOptions"><a href="regNewQuiz.html">Create new quiz</a></li>
 </ul>
-<div class="container" id="picCont">
-<img id="midlogo" align="middle" src="https://i.imgur.com/y3RIV5D.jpg" alt="Logo" height="150" width="300">
-</div>
-    <!--<img id="midlogo" align="middle" src="http://i67.tinypic.com/167sefa.png" alt="Logo" height="200" width="400">-->
-<div class="container" id="cont2">
-    <h2 id="mainWindowHeadline2">Future quizzes:</h2>
-    <ul id="futureQuizzes" style="list-style-type:disc">
-    </ul>
-    <div class="row">
-        <div name="quizzes" class="col-sm-2" style="background-color:#ffcbb3;"><dt>Quiz names</dt></div>
-        <div class="col-sm-2" style="background-color:#ffdccc;"><dt>Questions</dt></div>
-        <div name="quizzes" class="col-sm-2" style="background-color:#ffcbb3;"><dt>Appropriate for:</dt></div>
-        <div class="col-sm-2" style="background-color:#ffdccc;"><dt>Starting time</dt></div>
-        <div class="col-sm-2" style="background-color:#ffcbb3;"><dt>Players</dt></div>
-        <div class="col-sm-2" style="background-color:#ffdccc;"><dt>Join the quiz!</dt></div>
-    </div>
-</div>
-<br>
-<br>
-<div class="container" id="cont1">
-<h2 id="mainWindowHeadline1">Ongoing quizzes:</h2>
-<ul id="ongoingQuizzes" style="list-style-type:disc">
-</ul>
-    <div class="row">
-        <div name="quizzes" id="-1" class="col-sm-4" style="background-color:#ffdccc;"><dt>Quiz names</dt></div>
-        <div class="col-sm-4" style="background-color:#ffcbb3;"><dt>Started</dt></div>
-        <div class="col-sm-4" style="background-color:#ffdccc;"><dt>View the scoreboard!</dt></div>
-    </div>
-</div>
-<br>
-<br>
 
-<div class="container" id="cont3">
-    <h2 id="mainWindowHeadline3">Ended quizzes:</h2>
-    <ul id="finishedQuizze" style="list-style-type:disc">
-    </ul>
-    <div class="row">
-        <div name="quizzes" class="col-sm-4" style="background-color:#ffdccc;"><dt>Quiz names</dt></div>
-        <div class="col-sm-4" style="background-color:#ffcbb3;"><dt>Ended</dt></div>
-        <div class="col-sm-4" style="background-color:#ffdccc;"><dt>View the scoreboard!</dt></div>
+
+<div class="row">
+    <div class="col-sm-2">
+        <nav class="nav-sidebar">
+             <ul class="nav tabs">
+                <li class="active"><a  id="defaultOpen" class="tablink" onclick="openTable('futureQuiz')" data-toggle="tab">Future quizzes</a></li>
+                <li class=""><a  class="tablink" onclick="openTable('ongoingQuiz')" data-toggle="tab">Ongoing quizzes</a></li>
+                <li class=""><a  class="tablink" onclick="openTable('endedQuiz')" data-toggle="tab">Ended quizzes</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="col-sm-10">
+        <br>
+        <div id="picCont">
+            <img id="midlogo" align="middle" src="https://i.imgur.com/y3RIV5D.jpg" alt="Logo" height="150" width="300">
+        </div>
+        <div class="quizzes" id="futureQuiz">
+            <div >
+                <h2>Future quizzes:</h2>
+                <p id="infoText">(Click a quiz to join)</p>
+                <div>
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Quizname</th>
+                            <th>Start time</th>
+                            <th>Theme</th>
+                            <th>Questions</th>
+                            <th>Players</th>
+                        </tr>
+                        </thead>
+                        <tbody id="addFutureQuizzes">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="quizzes" id="ongoingQuiz">
+            <div>
+                <h2>Ongoing quizzes:</h2>
+                <div>
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Quizname</th>
+                            <th>Started</th>
+                            <th>View scoreboard!</th>
+                        </tr>
+                        </thead>
+                        <tbody id="addOngoingQuizzes">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="quizzes" id="endedQuiz">
+            <div style="padding: 10px; margin-right: 10px;">
+                <h2>Ended quizzes:</h2>
+                <div>
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Quizname</th>
+                            <th>Ended</th>
+                            <th>View scoreboard</th>
+                        </tr>
+                        </thead>
+                        <tbody id="addEndedQuizzes">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!--<img id="midlogo" align="middle" src="http://i67.tinypic.com/167sefa.png" alt="Logo" height="200" width="400">-->
+
+        <br>
+        <br>
+
     </div>
 </div>
-<br>
-<br>
 
 
 </body>
