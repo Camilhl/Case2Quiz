@@ -149,34 +149,37 @@
                     alert("You have to add two answer alternatives!")
                     i = numOfQuestions + 1;
                 }*/
-                $.ajax({
-                    url: 'rest/quizzes/' + $("#quizName").val() + '/questions',
-                    type: 'POST',
-                    data: JSON.stringify({
-                        "question": questions[i],
-                        "timeLimit": timelimit[i],
-                        "answers": [a1[i], a2[i], a3[i], a4[i]],
-                        "rightAnswerIndex": correctAnswer[i],
-                        "url": pictureURL[i],
-                    }),
-                    contentType: 'application/json; charset=utf-8',
-                    dataType: 'json',
 
-                    success: function (result) {
-                        alert("QUESTION added successfully");
-                    },
+                if(questions[i] != "") {
+                    $.ajax({
+                        url: 'rest/quizzes/' + $("#quizName").val() + '/questions',
+                        type: 'POST',
+                        data: JSON.stringify({
+                            "question": questions[i],
+                            "timeLimit": timelimit[i],
+                            "answers": [a1[i], a2[i], a3[i], a4[i]],
+                            "rightAnswerIndex": correctAnswer[i],
+                            "url": pictureURL[i],
+                        }),
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
 
-                    statusCode: {
-                        500: function () {
-                            //alert("WARNING: Questions were not added successfully.\nPlease click ''Submit'' one more time!");
-
-                            document.getElementById("warning").innerHTML = "Questions were not added successfully.\nPlease click ''Submit'' one more time!";
+                        success: function (result) {
+                            alert("QUESTION added successfully");
                         },
-                    }
-                });
 
-                if (i == numOfQuestions) {
-                    window.location.href = 'MainWindow.html'; //sends you to the MainWindow once the quiz was added successfully
+                        statusCode: {
+                            500: function () {
+                                //alert("WARNING: Questions were not added successfully.\nPlease click ''Submit'' one more time!");
+
+                                document.getElementById("warning").innerHTML = "Questions were not added successfully.\nPlease click ''Submit'' one more time!";
+                            },
+                        }
+                    });
+
+                    if (i == numOfQuestions) {
+                        window.location.href = 'MainWindow.html'; //sends you to the MainWindow once the quiz was added successfully
+                    }
                 }
             }
 
