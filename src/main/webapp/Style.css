@@ -89,7 +89,7 @@ p {
 
 .answerButtons {
     width: 100%;
-    height: 100px;
+    height: 60px;
 }
 
 .quizzes {
@@ -127,5 +127,15 @@ p {
 
 #submitBox {
     text-align: center;
+}
+
+#timeuntilStart {
+    text-align: center;
+}
+
+#questpicBox {
+    text-align: center;
+    width: 100%;
+    height: 200px;
 }
 
