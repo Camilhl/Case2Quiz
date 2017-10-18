@@ -27,6 +27,11 @@
 
         var timelimit = [];
 
+        var a1 = [];
+        var a2 = [];
+        var a3 = [];
+        var a4 = [];
+
         /**
          * Runs everytime an answer-alternative is chosen as the right one and being stored in an array.
          * @param questionNumber
@@ -195,11 +200,11 @@
                 tablinks[i].style.backgroundColor = "";
             }
 
-            if(quiz == 0){
+            if(quiz == 0){ //info
                 document.getElementById("QuizInfo").style.display = "block";
             }
 
-            if(quiz == 2){
+            else if(quiz == 2){ //new question
                 numOfQuestions += 1;
 
                 document.getElementById("Question").style.display = "block";
@@ -207,12 +212,12 @@
                 $("#questionheader").val(numOfQuestions);
 
 
-                $("#quizInfoField").append('<li class="">' +
+                $("#quizInfoField").append('<li id="newQ' + numOfQuestions + '" class="">' +
                     '<a name="cross" href="#tab" onclick="deleteQ(' + numOfQuestions + ')">&#10060;</a>' +
-                    '<a  class="tablink" onclick="openTable(1,' + "" + numOfQuestions + ')" data-toggle="tab">Question ' + numOfQuestions + '</a>' +
+                    '<a class="tablink" onclick="openTable(1,' + "" + numOfQuestions + ')" data-toggle="tab">Question ' + numOfQuestions + '</a>' +
                     '</li>');
 
-            } else if(quiz == 1) {
+            } else if(quiz == 1) { //question
 
                 document.getElementById("Question").style.display = "block";
                 document.getElementById("questionheader").innerHTML = number;
@@ -227,12 +232,22 @@
             questions[number] = $("#q0").val();
             pictureURL[number] = $("#p0").val();
             timelimit[number] = $("#t0").val();
+            a1[number] = $("#a1").val();
+            a2[number] = $("#a2").val();
+            a3[number] = $("#a3").val();
+            a4[number] = $("#a4").val();
+
 
             console.log(number + " " + questions[number] + " " + pictureURL[number] + " " + timelimit[number]);
 
             $("#q0").val("");
             $("#p0").val("");
             $("#t0").val(10);
+            $("#a1").val("");
+            $("#a2").val("");
+            $("#a3").val("");
+            $("#a4").val("");
+
 
         }
 
@@ -242,12 +257,19 @@
             $("#p0").val(pictureURL[number]);
             $("#t0").val(timelimit[number]);
 
+            $("#a1").val(a1[number]);
+            $("#a2").val(a2[number]);
+            $("#a3").val(a3[number]);
+            $("#a4").val(a4[number]);
+
+
         }
 
         function deleteQ(number){
             var deletename = "newQ" + number + "";
 
             document.getElementById(deletename).remove();
+
             if(number == numOfQuestions) {
                 numOfQuestions -= 1;
             }
@@ -255,6 +277,12 @@
             questions[number] = "";
             pictureURL[number] = "";
             timelimit[number] = "";
+            a1[number] = "";
+            a2[number] = "";
+            a3[number] = "";
+            a4[number] = "";
+
+
 
         }
 
@@ -287,7 +315,7 @@
             <ul class="nav tabs">
                 <li class="active"><a  id="defaultOpen" class="tablink" onclick="openTable(0, -1)" data-toggle="tab">Quiz info</a></li>
                 <div id="quizInfoField"></div>
-                <li class=""><a  class="tablink" onclick="openTable(2, -1)" data-toggle="tab">+ Add question</a></li>
+                <li class=""><a  class="tablink" onclick="openTable(2, -1)" >+ Add question</a></li>
                 <li class=""><a  class="tablink" onclick="preSubmit()" data-toggle="tab">Submit quiz</a></li>
             </ul>
         </nav>
@@ -346,14 +374,14 @@
                 <label>Answer-alternatives : (use checkbox to set the right answer)</label>
                 <br>
                 <div class="radio">
-                    <label class="col-sm-6"><input type="radio" checked name="selectanswer0" onfocus="selectAnswer(0, '0')"><input class="form-control" id="a10" type="text" placeholder="Required"></label>
-                    <label class="col-sm-6"><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '1')" ><input class="form-control" id="a20" type="text" placeholder="Required"></label></label>
+                    <label class="col-sm-6"><input type="radio" checked name="selectanswer0" onfocus="selectAnswer(0, '0')"><input class="form-control" id="a1" type="text" placeholder="Required"></label>
+                    <label class="col-sm-6"><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '1')" ><input class="form-control" id="a2" type="text" placeholder="Required"></label></label>
                 </div>
                 <br>
                 <br>
                 <div class="radio">
-                    <label class="col-sm-6"><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '2')"><input class="form-control" id="a30" type="text"></label></label>
-                    <label class="col-sm-6"><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '3')"><input class="form-control" id="a40" type="text"></label></label>
+                    <label class="col-sm-6"><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '2')"><input class="form-control" id="a3" type="text"></label></label>
+                    <label class="col-sm-6"><input type="radio" name="selectanswer0" onfocus="selectAnswer(0, '3')"><input class="form-control" id="a4" type="text"></label></label>
                 </div>
             </div>
         </div>
