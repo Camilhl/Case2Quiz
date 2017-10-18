@@ -37,6 +37,7 @@ html, body{
     padding: 0;
     overflow: hidden;
     background-color: #737373;
+    border-bottom:1px solid black;
 }
 
 
