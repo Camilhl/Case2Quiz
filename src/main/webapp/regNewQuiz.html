@@ -46,9 +46,11 @@
 
 
         $(document).ready(function() {
-
             $("#submitBox").hide();
             $("#Question").hide();
+            //$("#endspace").style.height = $(window).height()
+
+
 
             /**
              * Runs everytime the "add new question"-button is clicked
@@ -303,7 +305,7 @@
 <body>
 
 <ul id="topMenu">
-    <li id="topMenuOptions"><img alt="logo" id="toplogo" onclick="clickLogo()" src="https://image.ibb.co/mM8dUQ/Les_Quizerables.jpg" height="100" width="188"></li>
+    <li id="topMenuOptions"><img alt="logo" id="toplogo" onclick="clickLogo()" src="https://www.imageupload.co.uk/images/2017/10/18/Untitlessssd.png" height="100" width="188"></li>
     <li id="topMenuOptions"><a href="MainWindow.html">Start quizzing!</a></li>
     <li id="topMenuOptions" class="active"><a href="regNewQuiz.html">Create new quiz</a></li>
 </ul>
@@ -311,12 +313,13 @@
 
 <div class="row">
     <div class="col-sm-2">
-        <nav class="nav-sidebar">
+        <nav class="nav-sidebar" style="height: 500px;">
             <ul class="nav tabs">
                 <li class="active"><a  id="defaultOpen" class="tablink" onclick="openTable(0, -1)" data-toggle="tab">Quiz info</a></li>
                 <div id="quizInfoField"></div>
                 <li class=""><a  class="tablink" onclick="openTable(2, -1)" >+ Add question</a></li>
                 <li class=""><a  class="tablink" onclick="preSubmit()" data-toggle="tab">Submit quiz</a></li>
+                <li class="" ><div id="endspace"></div></li>
             </ul>
         </nav>
     </div>
