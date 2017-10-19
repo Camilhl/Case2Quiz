@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <title>ScoreBoard</title>
     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
-    <link rel="stylesheet" type="text/css" href="Style.css">
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="http://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="Style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="jquery-3.2.1.min.js"></script>
@@ -25,25 +25,23 @@
 
             document.getElementById("mainWindowHeadline2").innerHTML = "quizname: " + quizName + "";
 
-            showScoreboard();
+            showScoreboard(quizName);
+            getQuizzes();
 
         });
 
-        function showScoreboard(){
-            var placing = 1;
-
-            $.get("rest/quizzes/" + quizName + "/players", function (data) {
-
+        function showScoreboard(nameQuiz){
+            $.get("rest/quizzes/" + nameQuiz + "/players", function (data) {
                 numberOfPlayers = data.length;
-
                 if(data != null) {
-                    for (i = 0; i < data.length; i++) {
+                    $("#scoreboard").html("");
+                    for (var i = 0; i < data.length; i++) {
                         if(data[i] != null) {
-                            $("#cont4").append('<div class="row" id="row">'
-                                + '<div id="placing" name="quizzes" class="col-sm-4" style="background-color:#ffdccc;">' + placing + '</div>'
-                                + '<div id="placing" class="col-sm-4" style="background-color:#ffcbb3;">' + data[i].nickname + '</div>'
-                                + '<div if="score" class="col-sm-4" style="background-color:#ffdccc;">' + data[i].score + '</div></div>');
-                        placing += 1;
+                            document.getElementById("mainWindowHeadline2").innerHTML = "";
+                            document.getElementById("mainWindowHeadline2").innerHTML = "quizname: " + quizName + "";
+                            $("#scoreboard").append('<tr><td>'+(i+1)+'</td>' +
+                                '<td>'+data[i].nickname+'</td>' +
+                                '<td>'+data[i].score+'</td></tr>');
                         }
                     }
                 }
@@ -54,11 +52,43 @@
         var interval = setInterval(updateLivePanel, 5000)
 
         function updateLivePanel(){
-            for(i= 0; i < numberOfPlayers; i++) {
+            for(var i= 0; i < numberOfPlayers; i++) {
                 $("#row").remove();
             }
+            showScoreboard(quizName);
+        }
 
-            showScoreboard()
+
+        function helpFunction(name) {
+             quizName = name;
+             updateLivePanel();
+        }
+
+        function getQuizzes() {
+            $.get("rest/quizzes/", function (data) {
+                if (data != null) {
+                    var name;
+                    var quizTime;
+                    var currentTime = new Date();
+
+                    for (var i = 0; i < data.length; i++) {
+
+                        name = data[i].name;
+                        quizTime = data[i].startTime;
+
+
+                        if (quizTime < currentTime) { //future quiz
+                            if(quizName === name) {
+                                $("#quizzas").append('<li class="active"><a class="tablink" ' +
+                                    'data-toggle="tab" onclick="helpFunction(\''+name+'\')">'+name+'</a></li>');
+                            } else {
+                                $("#quizzas").append('<li class=""><a class="tablink" ' +
+                                    'onclick="helpFunction(\'' + name +'\')" data-toggle="tab">'+name+'</a></li>');
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         /**
@@ -77,6 +107,10 @@
             if (!results[2]) return '';
             return decodeURIComponent(results[2].replace(/\+/g, " "));
         }
+
+        function clickLogo() {
+            window.location.href = "Frontpage.html";
+        }
     </script>
 </head>
 <body>
@@ -84,24 +118,41 @@
     <li id="topMenuOptions"><img alt="logo" id="toplogo" onclick="clickLogo()" src="https://www.imageupload.co.uk/images/2017/10/18/Untitlessssd.png" height="100" width="188"></li>
     <li id="topMenuOptions"><a href="MainWindow.html">Start quizzing!</a></li>
     <li id="topMenuOptions"><a href="regNewQuiz.html">Create new quiz</a></li>
+    <li id="topMenuOptions" style="float: right"> <a href="Frontpage.html">
+        <span class="glyphicon glyphicon-home"></span>
+    </a></li>
 </ul>
-<br>
 
-<div class="container" id="picCont">
-    <img id="midlogo" align="middle" src="https://i.imgur.com/XMTa45z.png" alt="Logo" height="150" width="300">
-</div>
-<br>
 
-<div class="container" id="cont4">
-    <h1>Scoreboard</h1>
-    <h2 id="mainWindowHeadline2"></h2>
-    <br>
-    <ul id="futureQuizzes" style="list-style-type:disc">
-    </ul>
-    <div class="row">
-        <div name="quizzes" class="col-sm-4" style="background-color:#ffdccc;"><dt>Placing</dt></div>
-        <div class="col-sm-4" style="background-color:#ffcbb3;"><dt>Nickname</dt></div>
-        <div class="col-sm-4" style="background-color:#ffdccc;"><dt>Score</dt></div>
+<div class="row">
+    <div class="col-sm-2">
+        <nav class="nav-sidebar" style="height: 500px;">
+            <ul class="nav tabs" id="quizzas">
+
+            </ul>
+        </nav>
+    </div>
+    <div class="col-sm-9">
+        <h1>Scoreboard</h1>
+        <h2 id="mainWindowHeadline2"></h2>
+        <br>
+        <div>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Placing</th>
+                    <th>Nickname</th>
+                    <th>Score</th>
+                </tr>
+                </thead>
+                <tbody id="scoreboard">
+
+                </tbody>
+            </table>
+        </div>
+        <div id="picCont">
+            <img id="midlogo" align="middle" src="https://i.imgur.com/XMTa45z.png" alt="Logo" height="100" width="200">
+        </div>
     </div>
 </div>
 

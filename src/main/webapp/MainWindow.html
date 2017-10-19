@@ -95,8 +95,7 @@
          * Loads all the quizzes and places it in the correct table (future quizzes, ongoing quizzes, ended quizzes) by comparing currentDate and startDate(newDate).
          */
         function loadData() {
-            $("#cont2").append('<div class="row"> <div name="noquiz" id="noquiz" class="col-sm-12" style="background-color:#ffeee6;">No quizzes avaliable at the moment.. <a href="regNewQuiz.html">Create a new one!</a></div></div>');
-
+            $("#noquiz").append("There are no future quizzes. " + '<a id="createOne" href=regNewQuiz.html>'+"Create one."+'</a>')
             $.get("rest/quizzes/", function (data) {
                 if (data != null) {
                     $("#noquiz").hide()
@@ -127,7 +126,7 @@
 
 
                         if(newDate > currentTime){ //future quiz
-                            console.log(data[i].questions.length);
+                            $("#noquiz").html("");
                             outputDate = newwwwdate.getDate() + "/" + (newwwwdate.getMonth() + 1) + "/"
                                 + newwwwdate.getFullYear() + ", at " + newwwwdate.getHours() + ":" + newwwwdate.getMinutes();
                             $("#addFutureQuizzes").append('<tr onclick="insertNick(' + i + ')"> <td>'+quizName+'</td>' +
@@ -183,7 +182,6 @@
         function clickLogo() {
             window.location.href = "Frontpage.html";
         }
-        //test
 
     </script>
 
@@ -193,6 +191,9 @@
     <li id="topMenuOptions"><img alt="logo" id="toplogo" onclick="clickLogo()" src="https://www.imageupload.co.uk/images/2017/10/18/Untitlessssd.png" height="100" width="188"></li>
     <li id="topMenuOptions" class="active"><a href="MainWindow.html">Start quizzing!</a></li>
     <li id="topMenuOptions"><a href="regNewQuiz.html">Create new quiz</a></li>
+    <li id="topMenuOptions" style="float: right"> <a href="Frontpage.html">
+        <span class="glyphicon glyphicon-home"></span>
+    </a></li>
 </ul>
 
 
@@ -200,7 +201,7 @@
     <div class="col-sm-2">
         <nav class="nav-sidebar" style="height: 500px;">
              <ul class="nav tabs">
-                <li class="active"><a  id="defaultOpen" class="tablink" onclick="openTable('futureQuiz')" data-toggle="tab">Future quizzes</a></li>
+                <li class="active sideMenu"><a  id="defaultOpen" class="tablink" onclick="openTable('futureQuiz')" data-toggle="tab">Future quizzes</a></li>
                 <li class=""><a  class="tablink" onclick="openTable('ongoingQuiz')" data-toggle="tab">Ongoing quizzes</a></li>
                 <li class=""><a  class="tablink" onclick="openTable('endedQuiz')" data-toggle="tab">Ended quizzes</a></li>
             </ul>
@@ -227,6 +228,9 @@
 
                         </tbody>
                     </table>
+                    <div id="noquiz">
+
+                    </div>
                 </div>
             </div>
         </div>

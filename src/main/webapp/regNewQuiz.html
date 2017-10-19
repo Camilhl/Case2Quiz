@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <title>RegNewQuiz</title>
     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
-    <link rel="stylesheet" type="text/css" href="Style.css">
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="http://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="Style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
@@ -16,6 +16,7 @@
 
     <script src="jquery-3.2.1.min.js"></script>
     <script language="javascript">
+        var allFilled = true;
 
         var correctAnswer = []; //array of the index of correct answer on each question
 
@@ -101,30 +102,40 @@
              * Tries to store the quiz and the questions to the rest-server.
              */
             $("#submit").click(function () {
+                allFilled= true;
+                for(var i=1; i<=numOfQuestions; i++) {
+                    if (questions[i] != "") {
+                        if (a1[i] == "" || a2[i] == "") {
+                            alert("You have to fill in the required answers on question " + i);
+                            allFilled = false;
+                        }
+                    }
+                }
+                if(allFilled) {
+                    if ($("#quizName").val() == "") {
+                        alert("WARNING:\nYou have to chose a NAME for your quiz!");
+                    } else if ($("#time").val() == "") {
+                        alert("WARNING:\nYou have to chose a STARTING TIME for your quiz!");
+                    } else {
+                        $.ajax({
+                            url: 'rest/quizzes',
+                            type: 'POST',
+                            data: JSON.stringify({
+                                "name": $("#quizName").val(),
+                                "theme": $("#theme").val(),
+                                "startTime": $("#time").val(),
+                            }),
 
-                if($("#quizName").val() == ""){
-                    alert("WARNING:\nYou have to chose a NAME for your quiz!");
-                } else if($("#time").val() == "") {
-                    alert("WARNING:\nYou have to chose a STARTING TIME for your quiz!");
-                }else{
-                    $.ajax({
-                        url: 'rest/quizzes',
-                        type: 'POST',
-                        data: JSON.stringify({
-                            "name": $("#quizName").val(),
-                            "theme": $("#theme").val(),
-                            "startTime": $("#time").val(),
-                        }),
-
-                        contentType: 'application/json; charset=utf-8', //''application/json; charset=utf-8',
-                        dataType: 'json',
+                            contentType: 'application/json; charset=utf-8', //''application/json; charset=utf-8',
+                            dataType: 'json',
 
 
-                        success: function (result) {
-                            alert("QUIZINFO added successfully")
-                            pushQuestions(); //adds the questions AFTER success of adding the quiz
-                        },
-                    });
+                            success: function (result) {
+                                alert("QUIZINFO added successfully")
+                                pushQuestions(); //adds the questions AFTER success of adding the quiz
+                            },
+                        });
+                    }
                 }
 
 
@@ -137,53 +148,53 @@
          */
         function pushQuestions() {
 
-            for (var i = 1; i <= numOfQuestions; i++) {
-                /*var q = "#q" + i + "";
+            if(allFilled) {
+                for (var i = 1; i <= numOfQuestions; i++) {
+                    /*var q = "#q" + i + "";
                 var p = "#p" + i + "";
                 var t = "#t" + i + "";
                 var a1 = "#a1" + i + "";
                 var a2 = "#a2" + i + "";
                 var a3 = "#a3" + i + "";
                 var a4 = "#a4" + i + "";*/
-                /*if(($(a1).val() == "" || $(a2).val() == "")){
+                    /*if(($(a1).val() == "" || $(a2).val() == "")){
                     alert("You have to add two answer alternatives!")
                     i = numOfQuestions + 1;
                 }*/
 
                 if(questions[i] != "") {
-                    $.ajax({
-                        url: 'rest/quizzes/' + $("#quizName").val() + '/questions',
-                        type: 'POST',
-                        data: JSON.stringify({
-                            "question": questions[i],
-                            "timeLimit": timelimit[i],
-                            "answers": [a1[i], a2[i], a3[i], a4[i]],
-                            "rightAnswerIndex": correctAnswer[i],
-                            "url": pictureURL[i],
-                        }),
-                        contentType: 'application/json; charset=utf-8',
-                        dataType: 'json',
+                        $.ajax({
+                            url: 'rest/quizzes/' + $("#quizName").val() + '/questions',
+                            type: 'POST',
+                            data: JSON.stringify({
+                                "question": questions[i],
+                                "timeLimit": timelimit[i],
+                                "answers": [a1[i], a2[i], a3[i], a4[i]],
+                                "rightAnswerIndex": correctAnswer[i],
+                                "url": pictureURL[i],
+                            }),
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: 'json',
 
-                        success: function (result) {
-                            alert("QUESTION added successfully");
-                        },
-
-                        statusCode: {
-                            500: function () {
-                                //alert("WARNING: Questions were not added successfully.\nPlease click ''Submit'' one more time!");
-
-                                document.getElementById("warning").innerHTML = "Questions were not added successfully.\nPlease click ''Submit'' one more time!";
+                            success: function (result) {
+                                //  alert("QUESTION added successfully");
                             },
-                        }
-                    });
+
+                            statusCode: {
+                                500: function () {
+                                    //alert("WARNING: Questions were not added successfully.\nPlease click ''Submit'' one more time!");
+
+                                    document.getElementById("warning").innerHTML = "Questions were not added successfully.\nPlease click ''Submit'' one more time!";
+                                },
+                            }
+                        });
+                    }
 
                     if (i == numOfQuestions) {
                         window.location.href = 'MainWindow.html'; //sends you to the MainWindow once the quiz was added successfully
                     }
                 }
             }
-
-
         }
 
         function openTable(quiz, number) { //0 = info, 1 = question, 2 = newQuestion
@@ -311,6 +322,9 @@
     <li id="topMenuOptions"><img alt="logo" id="toplogo" onclick="clickLogo()" src="https://www.imageupload.co.uk/images/2017/10/18/Untitlessssd.png" height="100" width="188"></li>
     <li id="topMenuOptions"><a href="MainWindow.html">Start quizzing!</a></li>
     <li id="topMenuOptions" class="active"><a href="regNewQuiz.html">Create new quiz</a></li>
+    <li id="topMenuOptions" style="float: right"> <a href="Frontpage.html">
+        <span class="glyphicon glyphicon-home"></span>
+    </a></li>
 </ul>
 
 

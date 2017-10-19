@@ -53,7 +53,7 @@
                         }
                     }
 
-                   // $("#quizName").append(' ' + quizName + ''); //sets the headline "quiz name"
+                    $("#quizName").append('You have joined "' + quizName + '"'); //sets the headline "quiz name"
 
                     newDate = new Date(quizzes[quizIndex].startTime); //creates the date when the quiz starts
                     var outputDate = newDate.getDate() + "/" + (newDate.getMonth() + 1) + "/" + newDate.getFullYear() + ", at " + newDate.getHours() + ":" + newDate.getMinutes();
@@ -92,7 +92,12 @@
             var currentTime = new Date();
 
             if(currentTime < newDate){ //the quiz has not yet started
-                document.getElementById("question").innerHTML = "Seconds until start: " + Math.round((newDate-currentTime)/1000) + ""; //counts down seconds until start
+                var timeToQuiz = newDate -currentTime;
+                var days = Math.floor(timeToQuiz / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((timeToQuiz % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((timeToQuiz % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((timeToQuiz % (1000 * 60)) / 1000);
+                document.getElementById("question").innerHTML = days +" days, "+hours+" hours, "+minutes+" minutes and "+seconds+" seconds until start "/*Math.round((newDate-currentTime)/1000)*/ + ""; //counts down seconds until start
             }
             else{ //currentTime == newDate and the quiz should start
                 $("#beforestartBox").remove();
@@ -286,6 +291,9 @@
             if (!results[2]) return '';
             return decodeURIComponent(results[2].replace(/\+/g, " "));
         }
+        function clickLogo() {
+            window.location.href = "Frontpage.html";
+        }
     </script>
 </head>
 <body>
@@ -293,10 +301,13 @@
     <li id="topMenuOptions"><img alt="logo" id="toplogo" onclick="clickLogo()" src="https://www.imageupload.co.uk/images/2017/10/18/Untitlessssd.png" height="100" width="188"></li>
     <li id="topMenuOptions"><a href="MainWindow.html">Start quizzing!</a></li>
     <li id="topMenuOptions"><a href="regNewQuiz.html">Create new quiz</a></li>
+    <li id="topMenuOptions" style="float: right"> <a href="Frontpage.html">
+        <span class="glyphicon glyphicon-home"></span>
+    </a></li>
 </ul>
 <a></a>
 <div class="container" id="beforestartBox">
-<h2 id="quizName">You have joined the quiz!</h2>
+<h2 id="quizName"></h2>
 <p id="quizStarts">Quiz starting: </p>
     <p id="timeuntilStart"></p>
 </div>

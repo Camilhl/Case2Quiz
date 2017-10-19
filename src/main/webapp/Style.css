@@ -56,12 +56,13 @@ html, body{
 }
 
 #topMenuOptions a:hover {
-    background-color: #ff9666;
+    background-color: #6A6A6A;
 }
 .active {
-    background-color: #ff9666;
+    background-color: #6A6A6A;
     color: white;
 }
+
 
 #toplogo {
     padding: 16px
@@ -124,6 +125,7 @@ p {
     height: 100%;
 }
 
+
 #sidebar {
     height: 470px;
     background-color: #ffeee6;
@@ -155,5 +157,14 @@ p {
     text-align: center;
     width: 100%;
     height: 200px;
+}
+
+.nav>li>a:hover {
+    background-color: #505253;
+    color: white;
+}
+
+#createOne {
+    color: blue;
 }
 
