@@ -31,7 +31,7 @@
             var nickname = prompt("Please enter your nickname:", "Anonymus");
 
             if (nickname == null || nickname == "") {
-                alert("User cancelled the prompt.");
+                //alert("Please enter a nickname to join the quiz.");
             } else {
 
                 $.get("rest/quizzes/", function (data) {

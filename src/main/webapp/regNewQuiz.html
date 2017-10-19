@@ -102,12 +102,15 @@
              * Tries to store the quiz and the questions to the rest-server.
              */
             $("#submit").click(function () {
+                console.log("number of q " +numOfQuestions);
                 allFilled= true;
                 for(var i=1; i<=numOfQuestions; i++) {
+                    console.log(a1[i] + "  " + a2[i]);
                     if (questions[i] != "") {
-                        if (a1[i] == "" || a2[i] == "") {
+                        if (a1[i] == "" || a2[i] == "" || typeof a1[i] === "undefined" || typeof a2[i] === "undefined") {
                             alert("You have to fill in the required answers on question " + i);
                             allFilled = false;
+                            i = numOfQuestions + 1;
                         }
                     }
                 }
@@ -197,7 +200,7 @@
             }
         }
 
-        function openTable(quiz, number) { //0 = info, 1 = question, 2 = newQuestion
+        function openTable(page, number) { //0 = info, 1 = question, 2 = newQuestion
             $("#submitBox").hide();
 
             if (numOfQuestions > 0) {
@@ -211,16 +214,18 @@
             for (i = 0; i < cards.length; i++) {
                 cards[i].style.display = "none";
             }
+
             tablinks = document.getElementsByClassName("tablink");
             for (i = 0; i < tablinks.length; i++) {
                 tablinks[i].style.backgroundColor = "";
             }
 
-            if(quiz == 0){ //info
+            if(page === 0){ //info
                 document.getElementById("QuizInfo").style.display = "block";
             }
 
-            else if(quiz == 2){ //new question
+            else if(page === 2){ //new question
+                empty();
                 numOfQuestions += 1;
 
                 document.getElementById("Question").style.display = "block";
@@ -233,7 +238,8 @@
                     '<a class="tablink" onclick="openTable(1,' + "" + numOfQuestions + ')" data-toggle="tab">Question ' + numOfQuestions + '</a>' +
                     '</li>');
 
-            } else if(quiz == 1) { //question
+            } else if(page === 1) { //question
+                empty();
 
                 document.getElementById("Question").style.display = "block";
                 document.getElementById("questionheader").innerHTML = number;
@@ -255,7 +261,9 @@
 
 
             console.log(number + " " + questions[number] + " " + pictureURL[number] + " " + timelimit[number]);
+        }
 
+        function empty(){
             $("#q0").val("");
             $("#p0").val("");
             $("#t0").val(10);
@@ -263,8 +271,6 @@
             $("#a2").val("");
             $("#a3").val("");
             $("#a4").val("");
-
-
         }
 
         function fillQ(number){
@@ -277,6 +283,16 @@
             $("#a2").val(a2[number]);
             $("#a3").val(a3[number]);
             $("#a4").val(a4[number]);
+
+            document.getElementById("q0").innerHTML = questions[number];
+            document.getElementById("p0").innerHTML = pictureURL[number];
+
+
+            document.getElementById("a1").innerHTML = a1[number];
+            document.getElementById("a2").innerHTML = a2[number];
+            document.getElementById("a3").innerHTML = a3[number];
+            document.getElementById("a4").innerHTML = a4[number];
+
 
 
         }
